@@ -1,0 +1,6 @@
+{
+  "name": "Student Operations Portal",
+  "description": "Unified academic portal for student complaints, feedback, paper re-evaluations, and staff escalation workflows.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
