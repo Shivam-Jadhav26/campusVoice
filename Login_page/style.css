@@ -52,3 +52,10 @@ button {
 
     cursor: pointer;
 }
+button:hover{
+    background-color: rgb(123, 0, 255);
+}
+#message{
+    text-align: center;
+    padding-top: 10px;
+}
