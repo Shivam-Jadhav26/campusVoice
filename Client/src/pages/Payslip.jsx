@@ -4,6 +4,7 @@ const Payslip = () => {
   return (
     <div>
       
+      Payslip
     </div>
   )
 }
