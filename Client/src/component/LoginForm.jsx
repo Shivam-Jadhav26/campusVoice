@@ -29,7 +29,7 @@ const LoginForm = ({ role, title, subtitle }) => {
             <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-6 sm:p-12 lg:p-16 relative overflow-y-auto min-h-screen">
                 <div className="w-full max-w-md animate-fade-in relative z-10">
 
-                    {/* Back Link */}
+                    { /* Back Link */ }
                     <Link to='/login' className='inline-flex items-center gap-2 text-slate-400 hover:text-slate-700 text-sm mb-10 transition-colors'>
                         <ArrowLeftIcon size={16} /> Back to portals
                     </Link>
@@ -46,7 +46,7 @@ const LoginForm = ({ role, title, subtitle }) => {
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Email Field */}
+                        { /* Email Field */ }
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-2">
                                 Email address
@@ -57,12 +57,12 @@ const LoginForm = ({ role, title, subtitle }) => {
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="john@example.com"
-                                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
+                                className="w-full px-4 py-3  bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
                                 required
                             />
                         </div>
 
-                        {/* Password Field */}
+                        { /* Password Field */ }
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-2">
                                 Password
@@ -87,7 +87,7 @@ const LoginForm = ({ role, title, subtitle }) => {
                             </div>
                         </div>
 
-                        {/* Sign In Button */}
+                        { /* Sign In Button */ }
                         <button
                             type="submit"
                             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-sm"
