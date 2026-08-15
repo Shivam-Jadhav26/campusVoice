@@ -1,10 +1,13 @@
 import React from 'react'
+import Sidebar from '../component/Sidebar'
 
 const Attendence = () => {
   return (
-    <div>
-      Attendence
-    </div>
+    
+    <>
+      <Sidebar />
+    
+    </>
   )
 }
 
