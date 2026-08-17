@@ -1,17 +1,39 @@
 const User = require('../models/User');
+const Department = require('../models/Department');
 const ComplaintHistory = require('../models/ComplaintHistory');
+const mongoose = require('mongoose');
 const { notifyComplaintAssigned } = require('./notificationService');
 const { DEFAULT_ESCALATION_HOURS } = require('../utils/constants');
 
 const assignInitialHandler = async (complaint, department) => {
-  let handler = await User.findOne({ role: 'teacher', department });
-  
-  if (!handler) {
-    handler = await User.findOne({ role: 'hod', department });
+  let deptId = department;
+  if (typeof department === 'string' && !mongoose.Types.ObjectId.isValid(department)) {
+    const deptDoc = await Department.findOne({ name: { $regex: new RegExp(`^${department}$`, 'i') } });
+    if (deptDoc) deptId = deptDoc._id;
   }
-  
+
+  let handler = null;
+  if (mongoose.Types.ObjectId.isValid(deptId)) {
+    handler = await User.findOne({ role: 'teacher', department: deptId });
+    if (!handler) {
+      handler = await User.findOne({ role: 'hod', department: deptId });
+    }
+  }
+
   if (!handler) {
-    throw new Error('No appropriate handler found for this department');
+    handler = await User.findOne({ role: 'teacher' });
+  }
+
+  if (!handler) {
+    handler = await User.findOne({ role: 'hod' });
+  }
+
+  if (!handler) {
+    handler = await User.findOne({ role: 'admin' });
+  }
+
+  if (!handler) {
+    throw new Error('No appropriate handler found');
   }
 
   complaint.currentHandler = handler.role === 'teacher' ? 'Teacher' : 'HOD';

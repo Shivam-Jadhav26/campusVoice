@@ -1,5 +1,7 @@
 const ComplaintHistory = require('../models/ComplaintHistory');
 const User = require('../models/User');
+const Department = require('../models/Department');
+const mongoose = require('mongoose');
 const { notifyComplaintEscalated } = require('./notificationService');
 const { ESCALATION_CHAIN, ESCALATION_ROLES, DEFAULT_ESCALATION_HOURS } = require('../utils/constants');
 
@@ -7,11 +9,21 @@ const getNextHandlerForLevel = async (level, department) => {
   const role = ESCALATION_ROLES[level];
   let query = { role };
 
-  if (role !== 'committee' && role !== 'admin') {
-    query.department = department;
+  if (role !== 'committee' && role !== 'admin' && department) {
+    let deptId = department;
+    if (typeof department === 'string' && !mongoose.Types.ObjectId.isValid(department)) {
+      const deptDoc = await Department.findOne({ name: { $regex: new RegExp(`^${department}$`, 'i') } });
+      if (deptDoc) deptId = deptDoc._id;
+    }
+    if (mongoose.Types.ObjectId.isValid(deptId)) {
+      query.department = deptId;
+    }
   }
 
-  const handler = await User.findOne(query);
+  let handler = await User.findOne(query);
+  if (!handler && role !== 'committee' && role !== 'admin') {
+    handler = await User.findOne({ role });
+  }
   return handler;
 };
 
