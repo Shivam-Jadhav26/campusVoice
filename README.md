@@ -1,27 +1,25 @@
-# 🎓 Campus Voice — Advanced Complaint Management System
+# 🎓 Campus Voice — Advanced Grievance & Complaint Management System
 
-A production-grade MERN stack complaint management platform for colleges, featuring multi-role dashboards, automatic escalation, real-time notifications, AI-powered features, feedback portal, and academic review workflows.
+A production-grade MERN stack complaint management platform for colleges and universities, featuring multi-role dashboards, automated 5-tier SLA escalation, real-time notifications, AI-powered triaging, feedback portal, and academic review workflows.
 
 ---
 
 ## 🚀 Features
 
-### Core
-- 🔐 JWT Authentication with role-based access control
-- 👥 7 User Roles: Student, Teacher, TG, Class Incharge, HOD, Committee, Admin
-- 📋 Complete Complaint Lifecycle Management
-- ⚡ Automatic Escalation via `node-cron`
-- 🔔 Real-time Notifications via Socket.IO
-- 🤖 AI Complaint Categorization (mock + OpenAI-ready)
-- 📊 Analytics Dashboards with Recharts
-- 📁 File Uploads (Multer)
-- 🎭 Feedback Portal with Anonymous Mode
-- 🎓 Academic Review/Re-evaluation Module
-- 📝 Comprehensive Audit Logs
+### Core Capabilities
+- 🔐 **JWT Authentication & RBAC**: Access & Refresh token rotation with strict role gating.
+- 👥 **7 Dedicated Roles**: Student, Teacher, Tutor Guardian (TG), Class Incharge, HOD, Grievance Committee, Admin.
+- ⚡ **5-Tier SLA Escalation Engine**: Automated background cron job escalating overdue tickets across levels.
+- 🔔 **Real-Time Notification System**: Socket.IO powered alerts on ticket changes and decisions.
+- 🤖 **AI Complaint Triaging & Duplicate Detection**: Instant sentiment classification and duplicate checks.
+- 📊 **Executive Analytics**: Recharts-powered trend graphs, SLA compliance velocity, and category distributions.
+- 🎭 **Anonymous Feedback Hub**: Star ratings and feedback with privacy masking.
+- 🎓 **Academic Review & Re-evaluation**: Re-marking requests with scanned copy uploads.
+- 📝 **Immutable Audit Trail**: Security-critical user action recording.
 
-### Escalation Chain
+### 5-Tier Escalation Chain
 ```
-Student → Teacher (24h) → TG (24h) → Class Incharge (24h) → HOD (24h) → Committee (Final)
+Level 0: Teacher (24h) ➔ Level 1: TG (24h) ➔ Level 2: Class Incharge (24h) ➔ Level 3: HOD (24h) ➔ Level 4: Committee (Final)
 ```
 
 ---
@@ -29,16 +27,10 @@ Student → Teacher (24h) → TG (24h) → Class Incharge (24h) → HOD (24h) �
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
-| Frontend | React + Vite + Tailwind CSS |
-| Backend | Node.js + Express.js |
-| Database | MongoDB + Mongoose |
-| Auth | JWT (Access + Refresh Tokens) |
-| Real-time | Socket.IO |
-| Scheduler | node-cron |
-| File Upload | Multer |
-| Validation | express-validator |
-| Charts | Recharts |
+|---|---|
+| **Frontend** | React 18, Vite, Tailwind CSS, Lucide Icons, Recharts, React Hook Form |
+| **Backend** | Node.js, Express.js, Mongoose 9, Socket.IO, Multer, Node-Cron, Bcrypt |
+| **Database** | MongoDB Atlas / Local MongoDB |
 
 ---
 
@@ -46,68 +38,45 @@ Student → Teacher (24h) → TG (24h) → Class Incharge (24h) → HOD (24h) �
 
 ```
 Campus Voice/
-├── frontend/              # React + Vite + Tailwind
+├── frontend/              # React 18 + Vite + Tailwind UI
 │   └── src/
-│       ├── components/    # Reusable UI components
-│       ├── pages/         # Page components per role
-│       ├── context/       # Auth & Notification context
-│       ├── services/      # Axios API services
-│       └── utils/         # Helpers & constants
+│       ├── components/    # Reusable UI & Layout (DashboardLayout, Sidebar, Navbar)
+│       ├── pages/         # 7 Role Dashboards (student, teacher, tg, class_incharge, hod, committee, admin)
+│       ├── context/       # AuthContext & NotificationContext
+│       └── services/      # Axios API services
 │
-├── backend/               # Node.js + Express
+├── backend/               # Node.js + Express API
 │   └── src/
-│       ├── models/        # Mongoose models
-│       ├── controllers/   # Business logic
-│       ├── routes/        # API routes
-│       ├── middleware/     # Auth, roles, error handler
-│       ├── services/      # AI, notifications, escalation
-│       ├── jobs/          # node-cron jobs
-│       └── config/        # DB & Socket.IO config
+│       ├── models/        # Mongoose schemas (Complaint, User, Feedback, AcademicReview, etc.)
+│       ├── controllers/   # Business logic per domain
+│       ├── routes/        # Role-protected API routes
+│       ├── services/      # AI, Notification, Escalation services
+│       └── jobs/          # Node-cron background escalation worker
 │
 └── README.md
 ```
 
 ---
 
-## ⚙️ Installation & Setup
+## ⚙️ Quick Start (Local Setup)
 
-### Prerequisites
-- Node.js v18+
-- MongoDB (local or Atlas)
-- npm v9+
-
-### 1. Clone / Open Project
-```bash
-cd "Campus Voice"
-```
-
-### 2. Backend Setup
+### 1. Backend Setup
 ```bash
 cd backend
-
-# Install dependencies
 npm install
-
-# Copy environment variables
-cp .env.example .env
-# Edit .env with your MongoDB URI and JWT secret
-
-# Start backend (development)
 npm run dev
+# Running on http://localhost:5000
 ```
 
-### 3. Frontend Setup
+### 2. Frontend Setup
 ```bash
 cd frontend
-
-# Install dependencies
 npm install
-
-# Start frontend
 npm run dev
+# Running on http://localhost:5173
 ```
 
-### 4. Seed Demo Data
+### 3. Seed Demo Data (Optional)
 ```bash
 cd backend
 npm run seed
@@ -115,100 +84,20 @@ npm run seed
 
 ---
 
-## 🌱 Demo Credentials
+## 🌱 Demo Accounts
+Default password for all accounts: `Password@123`
 
-After running `npm run seed`:
-
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@demo.com | Password@123 |
-| Student | student@demo.com | Password@123 |
-| Teacher | teacher@demo.com | Password@123 |
-| TG | tg@demo.com | Password@123 |
-| Class Incharge | classincharge@demo.com | Password@123 |
-| HOD | hod@demo.com | Password@123 |
-| Committee | committee@demo.com | Password@123 |
-
----
-
-## 🔌 API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/login` | Login |
-| GET | `/api/auth/me` | Get current user |
-| POST | `/api/auth/refresh` | Refresh token |
-| GET | `/api/complaints` | List complaints |
-| POST | `/api/complaints` | Create complaint |
-| GET | `/api/complaints/:id` | Get complaint |
-| POST | `/api/complaints/:id/resolve` | Resolve |
-| POST | `/api/complaints/:id/escalate` | Escalate |
-| GET | `/api/dashboard/student` | Student dashboard |
-| GET | `/api/dashboard/admin` | Admin dashboard |
-| GET | `/api/feedback` | List feedback |
-| POST | `/api/feedback` | Submit feedback |
-| GET | `/api/academic-reviews` | List reviews |
-| POST | `/api/academic-reviews` | Submit review |
-| GET | `/api/notifications` | Get notifications |
-| GET | `/api/analytics/complaints` | Analytics |
-| GET | `/api/audit-logs` | Audit logs (admin) |
-
----
-
-## 🔒 Environment Variables
-
-```env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/campus-voice
-JWT_SECRET=your_jwt_secret
-JWT_REFRESH_SECRET=your_refresh_secret
-JWT_EXPIRES_IN=15m
-JWT_REFRESH_EXPIRES_IN=7d
-CLIENT_URL=http://localhost:5173
-OPENAI_API_KEY=           # Optional: for real AI features
-NODE_ENV=development
-```
-
----
-
-## 🤖 AI Features (Mock Mode)
-
-Without `OPENAI_API_KEY`, the system uses intelligent keyword-based mocks:
-- **Complaint Categorization**: keyword matching → category + priority
-- **Duplicate Detection**: text similarity scoring
-- **Sentiment Analysis**: keyword-based positive/negative/neutral
-- **Reply Suggestions**: professional templates per category
-
-Set `OPENAI_API_KEY` in `.env` to enable real AI.
-
----
-
-## 📱 Responsive Design
-
-- ✅ Desktop: Fixed sidebar + main content
-- ✅ Tablet: Collapsible sidebar
-- ✅ Mobile: Hamburger menu drawer
-
----
-
-## 🧪 Running Both Servers
-
-**Terminal 1 (Backend):**
-```bash
-cd backend && npm run dev
-# Runs on http://localhost:5000
-```
-
-**Terminal 2 (Frontend):**
-```bash
-cd frontend && npm run dev
-# Runs on http://localhost:5173
-```
-
-Frontend proxies `/api` requests to the backend automatically.
+| Role | Email | Access |
+|---|---|---|
+| **Student** | `student@demo.com` | File grievances, academic reviews, anonymous feedback |
+| **Teacher** | `teacher@demo.com` | Subject ticket resolution within 24h SLA |
+| **Tutor Guardian** | `tg@demo.com` | Level-1 cohort escalation review |
+| **Class Incharge** | `classincharge@demo.com` | Level-2 class cohort management |
+| **HOD** | `hod@demo.com` | Level-3 departmental moderation & analytics |
+| **Committee** | `committee@demo.com` | Level-4 final grievance hearings |
+| **Admin** | `admin@demo.com` | User management, departments, audit logs, system settings |
 
 ---
 
 ## 📄 License
-
-MIT — Campus Voice © 2026
+MIT © Campus Voice
