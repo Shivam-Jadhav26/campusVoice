@@ -13,9 +13,12 @@ export default function ProfilePage() {
 
   const [formData, setFormData] = useState({
     name: user?.name || '',
-    phone: user?.phone || '+1 555-0101',
+    phone: user?.phone || '+91 98201 10002',
     class: user?.class || 'SE-A',
     rollNumber: user?.rollNumber || 'CE2024001',
+    dob: user?.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
+    currentYear: user?.currentYear || '2nd Year',
+    batch: user?.batch || '2023-2027',
   });
   
   const [passwordData, setPasswordData] = useState({
@@ -99,7 +102,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="flex items-center text-slate-600">
                   <Calendar className="w-4 h-4 mr-2.5 text-slate-400 shrink-0" />
-                  <span>Active Member • 2024-2025</span>
+                  <span>Active Member • {user?.batch || '2024-2025'}</span>
                 </div>
               </div>
             </div>
@@ -163,6 +166,36 @@ export default function ProfilePage() {
                       disabled={!isEditing} 
                       value={formData.rollNumber} 
                       onChange={e => setFormData({...formData, rollNumber: e.target.value})} 
+                      className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Date of Birth</label>
+                    <input 
+                      type="date" 
+                      disabled={!isEditing} 
+                      value={formData.dob} 
+                      onChange={e => setFormData({...formData, dob: e.target.value})} 
+                      className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm [color-scheme:light]" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Current Year</label>
+                    <input 
+                      type="text" 
+                      disabled={!isEditing} 
+                      value={formData.currentYear} 
+                      onChange={e => setFormData({...formData, currentYear: e.target.value})} 
+                      className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Batch</label>
+                    <input 
+                      type="text" 
+                      disabled={!isEditing} 
+                      value={formData.batch} 
+                      onChange={e => setFormData({...formData, batch: e.target.value})} 
                       className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm" 
                     />
                   </div>

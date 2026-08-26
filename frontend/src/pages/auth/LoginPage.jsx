@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Mail,
   Lock,
@@ -385,7 +385,13 @@ export default function LoginPage() {
           </form>
 
           {/* Footer Note */}
-          <div className="pt-4 text-center border-t border-slate-800/80">
+          <div className="pt-4 text-center border-t border-slate-800/80 space-y-3">
+            <p className="text-sm text-slate-400">
+              New Student?{' '}
+              <Link to="/register" className="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors">
+                Create an account
+              </Link>
+            </p>
             <p className="text-[11px] text-slate-500 flex items-center justify-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
               Role-Based Access Control (RBAC) & End-to-End Audit Trail

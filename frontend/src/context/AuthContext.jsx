@@ -57,6 +57,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const register = async (userData) => {
+    try {
+      const response = await authAPI.register(userData);
+      const payload = response.data.data;
+      
+      localStorage.setItem('cv_access_token', payload.accessToken);
+      localStorage.setItem('cv_refresh_token', payload.refreshToken);
+      
+      setAccessToken(payload.accessToken);
+      setUser(payload.user);
+      setIsAuthenticated(true);
+      
+      return payload.user.role;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const logout = async () => {
     try {
       if (isAuthenticated) {
@@ -73,7 +91,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, loading, accessToken, login, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, loading, accessToken, login, register, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

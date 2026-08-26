@@ -10,6 +10,52 @@ const generateTokens = (user) => {
   return { accessToken, refreshToken };
 };
 
+exports.register = async (req, res, next) => {
+  try {
+    const { name, email, password, rollNumber, dob, currentYear, departmentName, batch } = req.body;
+    
+    if (!name || !email || !password) {
+      return sendError(res, 'Please provide name, email, and password', 400);
+    }
+    
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return sendError(res, 'Email already in use', 400);
+    }
+    
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role: 'student', // Registration is only for students right now
+      rollNumber,
+      dob,
+      currentYear,
+      departmentName,
+      batch
+    });
+    
+    const { accessToken, refreshToken } = generateTokens(user);
+    
+    const salt = await bcrypt.genSalt(10);
+    user.refreshToken = await bcrypt.hash(refreshToken, salt);
+    await user.save();
+    
+    res.cookie('accessToken', accessToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 15 * 60 * 1000 });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 7 * 24 * 60 * 60 * 1000 });
+    
+    await createAuditLog(user._id, 'REGISTER', 'User', user._id, 'User registered', req);
+    
+    const userObj = user.toObject();
+    delete userObj.password;
+    delete userObj.refreshToken;
+    
+    return sendSuccess(res, { user: userObj, accessToken, refreshToken }, 'Registration successful', 201);
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;

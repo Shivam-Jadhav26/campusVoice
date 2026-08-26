@@ -115,9 +115,11 @@ exports.deleteUser = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
   try {
-    const { name, phone, class: userClass } = req.body;
+    const { name, phone, class: userClass, rollNumber, dob, currentYear, batch } = req.body;
     
-    const user = await User.findByIdAndUpdate(req.user.id, { name, phone, class: userClass }, { new: true });
+    const user = await User.findByIdAndUpdate(req.user.id, { 
+      name, phone, class: userClass, rollNumber, dob, currentYear, batch 
+    }, { new: true });
     
     return sendSuccess(res, { user }, 'Profile updated');
   } catch (error) {

@@ -36,6 +36,9 @@ const userSchema = new mongoose.Schema(
     departmentName: { type: String },
     class: { type: String },
     rollNumber: { type: String },
+    dob: { type: Date },
+    currentYear: { type: String }, // e.g., '1st Year', '2nd Year', '3rd Year', '4th Year'
+    batch: { type: String }, // e.g., '2023-2027'
     phone: { type: String },
     avatar: { type: String },
     isActive: { type: Boolean, default: true },

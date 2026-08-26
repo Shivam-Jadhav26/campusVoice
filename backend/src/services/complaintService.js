@@ -87,8 +87,13 @@ const buildComplaintQuery = (param1, param2, param3, param4) => {
   }
 
   const query = {};
-  if (filters.status) query.status = filters.status;
-  if (filters.priority) query.priority = filters.priority;
+  if (filters.status) {
+    // Handle snake_case to Space Case (in_progress -> In Progress) and make case-insensitive
+    query.status = new RegExp('^' + filters.status.replace('_', ' ') + '$', 'i');
+  }
+  if (filters.priority) {
+    query.priority = new RegExp('^' + filters.priority + '$', 'i');
+  }
   if (filters.category) query.category = filters.category;
   if (filters.department) query.department = filters.department;
 

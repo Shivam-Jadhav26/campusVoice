@@ -6,6 +6,7 @@ import { NotificationProvider } from './context/NotificationContext';
 
 // Auth
 import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
 
 // Student
 import StudentDashboard from './pages/student/StudentDashboard';
@@ -97,6 +98,7 @@ const App = () => {
           />
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route path="/" element={<RoleBasedRedirect />} />
 
             {/* Student Routes */}
