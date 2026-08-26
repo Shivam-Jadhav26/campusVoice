@@ -51,8 +51,8 @@ exports.getFeedback = async (req, res, next) => {
     }
     
     let feedbacks = await Feedback.find(query)
-      .populate('student', 'name email role')
-      .populate('department', 'name')
+      .populate('studentId', 'name email role')
+      .populate('departmentId', 'name')
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
       .sort({ createdAt: -1 });
@@ -62,7 +62,7 @@ exports.getFeedback = async (req, res, next) => {
       feedbacks = feedbacks.map(f => {
         if (f.isAnonymous) {
           const doc = f.toObject();
-          doc.student = { name: 'Anonymous Student', _id: null };
+          doc.studentId = { name: 'Anonymous Student', _id: null };
           return doc;
         }
         return f;
@@ -80,14 +80,14 @@ exports.getFeedback = async (req, res, next) => {
 exports.getFeedbackById = async (req, res, next) => {
   try {
     let feedback = await Feedback.findById(req.params.id)
-      .populate('student', 'name email role')
-      .populate('department', 'name');
+      .populate('studentId', 'name email role')
+      .populate('departmentId', 'name');
       
     if (!feedback) return sendError(res, 'Feedback not found', 404);
     
     if (feedback.isAnonymous && req.user.role !== 'Admin') {
       feedback = feedback.toObject();
-      feedback.student = { name: 'Anonymous Student', _id: null };
+      feedback.studentId = { name: 'Anonymous Student', _id: null };
     }
     
     return sendSuccess(res, { feedback }, 'Feedback retrieved');

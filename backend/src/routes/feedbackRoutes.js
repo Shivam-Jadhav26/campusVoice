@@ -12,7 +12,7 @@ const { verifyJWT, authorizeRoles } = require('../middleware/auth');
 router.use(verifyJWT);
 
 // Analytics accessible by higher authorities
-router.get('/analytics', authorizeRoles('hod', 'admin', 'committee'), getFeedbackAnalytics);
+router.get('/analytics', authorizeRoles('hod', 'admin'), getFeedbackAnalytics);
 
 // Basic CRUD
 router.post('/', authorizeRoles('student'), createFeedback);

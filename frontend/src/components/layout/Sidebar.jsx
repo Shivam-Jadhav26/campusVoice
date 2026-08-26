@@ -69,12 +69,6 @@ const Sidebar = ({ isOpen, onClose }) => {
           { label: 'Analytics', path: '/hod/analytics', icon: BarChart3 },
           ...common
         ];
-      case 'committee':
-        return [
-          { label: 'Dashboard', path: '/committee/dashboard', icon: LayoutDashboard },
-          { label: 'Complaints', path: '/committee/complaints', icon: FileText },
-          ...common
-        ];
       case 'admin':
         return [
           { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },

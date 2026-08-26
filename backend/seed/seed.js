@@ -52,17 +52,17 @@ const seedDB = async () => {
       // Admin
       {
         _id: new mongoose.Types.ObjectId(),
-        name: 'Super Admin',
+        name: 'Rajesh Sharma (Admin)',
         email: 'admin@demo.com',
         password: hashedPassword,
         role: 'admin',
-        phone: '+1 555-0100',
+        phone: '+91 98201 10001',
         isActive: true
       },
       // Students
       {
         _id: new mongoose.Types.ObjectId(),
-        name: 'Alex Johnson',
+        name: 'Aarav Patel',
         email: 'student@demo.com',
         password: hashedPassword,
         role: 'student',
@@ -70,7 +70,7 @@ const seedDB = async () => {
         departmentName: ceDept.name,
         class: 'SE-A',
         rollNumber: 'CE2024001',
-        phone: '+1 555-0101',
+        phone: '+91 98201 10002',
         isActive: true
       },
       {
@@ -83,12 +83,12 @@ const seedDB = async () => {
         departmentName: ceDept.name,
         class: 'TE-B',
         rollNumber: 'CE2024045',
-        phone: '+1 555-0102',
+        phone: '+91 98201 10003',
         isActive: true
       },
       {
         _id: new mongoose.Types.ObjectId(),
-        name: 'David Miller',
+        name: 'Rohan Verma',
         email: 'student3@demo.com',
         password: hashedPassword,
         role: 'student',
@@ -96,19 +96,19 @@ const seedDB = async () => {
         departmentName: itDept.name,
         class: 'BE-A',
         rollNumber: 'IT2024012',
-        phone: '+1 555-0103',
+        phone: '+91 98201 10004',
         isActive: true
       },
       // Faculty & Staff
       {
         _id: new mongoose.Types.ObjectId(),
-        name: 'Prof. Robert Brown',
+        name: 'Prof. Rajesh Kulkarni',
         email: 'teacher@demo.com',
         password: hashedPassword,
         role: 'teacher',
         department: ceDept._id,
         departmentName: ceDept.name,
-        phone: '+1 555-0104',
+        phone: '+91 98201 10005',
         isActive: true
       },
       {
@@ -119,7 +119,7 @@ const seedDB = async () => {
         role: 'teacher',
         department: ceDept._id,
         departmentName: ceDept.name,
-        phone: '+1 555-0105',
+        phone: '+91 98201 10006',
         isActive: true
       },
       {
@@ -130,39 +130,30 @@ const seedDB = async () => {
         role: 'tg',
         department: ceDept._id,
         departmentName: ceDept.name,
-        phone: '+1 555-0106',
+        phone: '+91 98201 10007',
         isActive: true
       },
       {
         _id: new mongoose.Types.ObjectId(),
-        name: 'Prof. Sarah Wilson',
+        name: 'Prof. Sneha Deshmukh',
         email: 'classincharge@demo.com',
         password: hashedPassword,
         role: 'class_incharge',
         department: ceDept._id,
         departmentName: ceDept.name,
         class: 'SE-A',
-        phone: '+1 555-0107',
+        phone: '+91 98201 10008',
         isActive: true
       },
       {
         _id: new mongoose.Types.ObjectId(),
-        name: 'Dr. Arthur Davis',
+        name: 'Dr. Anand Joshi',
         email: 'hod@demo.com',
         password: hashedPassword,
         role: 'hod',
         department: ceDept._id,
         departmentName: ceDept.name,
-        phone: '+1 555-0108',
-        isActive: true
-      },
-      {
-        _id: new mongoose.Types.ObjectId(),
-        name: 'Dr. Elena Rostova',
-        email: 'committee@demo.com',
-        password: hashedPassword,
-        role: 'committee',
-        phone: '+1 555-0109',
+        phone: '+91 98201 10009',
         isActive: true
       }
     ].map(u => ({
@@ -185,7 +176,6 @@ const seedDB = async () => {
     const tgUser = usersData[6];
     const inchargeUser = usersData[7];
     const hodUser = usersData[8];
-    const committeeUser = usersData[9];
 
     await db.collection('departments').updateOne({ _id: ceDept._id }, { $set: { hod: hodUser._id } });
 
@@ -327,17 +317,17 @@ const seedDB = async () => {
         location: 'Campus Canteen A',
         priority: 'Critical',
         student: student2,
-        currentHandler: 'Committee',
-        handlerUser: committeeUser,
+        currentHandler: 'HOD',
+        handlerUser: hodUser,
         status: 'Escalated',
-        escalationLevel: 4,
+        escalationLevel: 3,
         daysAgo: 7,
         isEscalated: true,
         history: [
           { action: 'Created', desc: 'Complaint submitted with photo evidence', by: student2, role: 'student' },
           { action: 'Assigned', desc: `Assigned to ${teacher2.name}`, by: null, isSystem: true },
-          { action: 'Escalated', desc: 'Escalated to HOD due to health severity', by: tgUser, role: 'tg' },
-          { action: 'Escalated', desc: 'Escalated to Student Welfare Committee for vendor audit', by: hodUser, role: 'hod' }
+          { action: 'Escalated', desc: 'Escalated to TG due to health severity', by: tgUser, role: 'tg' },
+          { action: 'Escalated', desc: `Escalated to HOD (${hodUser.name}) for vendor audit`, by: inchargeUser, role: 'class_incharge' }
         ]
       },
       {
@@ -518,7 +508,7 @@ const seedDB = async () => {
       {
         type: 'Faculty',
         rating: 5,
-        comment: 'Dr. Arthur Davis gave exceptional mentorship for our capstone project architecture review.',
+        comment: 'Dr. Anand Joshi gave exceptional mentorship for our capstone project architecture review.',
         department: ceDept.name,
         departmentId: ceDept._id,
         isAnonymous: false,
@@ -706,19 +696,6 @@ const seedDB = async () => {
         isRead: false,
         priority: 'urgent',
         createdAt: new Date(now - 6 * 3600000)
-      },
-      {
-        _id: new mongoose.Types.ObjectId(),
-        recipient: committeeUser._id,
-        title: 'Committee Review Pending',
-        message: 'Complaint "Hygiene and food quality issue in South Campus Canteen" reached Committee level.',
-        type: 'escalation',
-        entityId: complaintsToInsert[5]._id,
-        entityType: 'Complaint',
-        link: `/committee/complaints`,
-        isRead: false,
-        priority: 'urgent',
-        createdAt: new Date(now - 1 * 3600000)
       },
       {
         _id: new mongoose.Types.ObjectId(),

@@ -70,9 +70,9 @@ exports.getComplaints = async (req, res, next) => {
     const query = complaintService.buildComplaintQuery(req.user, { status, priority, category, department, search, dateFrom, dateTo });
     
     const complaints = await Complaint.find(query)
-      .populate('student', 'name email')
-      .populate('assignedTo', 'name email')
-      .populate('department', 'name')
+      .populate('studentId', 'name email')
+      .populate('currentHandlerId', 'name email role')
+      .populate('departmentId', 'name')
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
       .sort({ createdAt: -1 });
@@ -88,13 +88,15 @@ exports.getComplaints = async (req, res, next) => {
 exports.getComplaintById = async (req, res, next) => {
   try {
     const complaint = await Complaint.findById(req.params.id)
-      .populate('student', 'name email role')
-      .populate('assignedTo', 'name email role')
-      .populate('department', 'name');
+      .populate('studentId', 'name email role')
+      .populate('currentHandlerId', 'name email role')
+      .populate('departmentId', 'name');
       
     if (!complaint) return sendError(res, 'Complaint not found', 404);
     
-    const history = await ComplaintHistory.find({ complaint: complaint._id }).populate('actor', 'name role').sort({ createdAt: 1 });
+    const history = await ComplaintHistory.find({ complaint: complaint._id })
+      .populate('performedBy', 'name role email')
+      .sort({ createdAt: 1 });
     
     return sendSuccess(res, { complaint, history }, 'Complaint details retrieved');
   } catch (error) {
@@ -109,17 +111,23 @@ exports.updateComplaintStatus = async (req, res, next) => {
     
     if (!complaint) return sendError(res, 'Complaint not found', 404);
     
+    const prevStatus = complaint.status;
     complaint.status = status;
     await complaint.save();
     
     await ComplaintHistory.create({
       complaint: complaint._id,
       action: 'Status Updated',
-      actor: req.user.id,
-      message: message || `Status changed to ${status}`
+      description: message || `Status changed from ${prevStatus} to ${status}`,
+      performedBy: req.user.id || req.user._id,
+      performedByName: req.user.name,
+      performedByRole: req.user.role,
+      previousStatus: prevStatus,
+      newStatus: status,
+      message: message || ''
     });
     
-    await createAuditLog(req.user.id, 'UPDATE_STATUS', 'Complaint', complaint._id, `Complaint status changed to ${status}`, req);
+    await createAuditLog(req.user.id || req.user._id, 'UPDATE_STATUS', 'Complaint', complaint._id, `Complaint status changed to ${status}`, req);
     
     return sendSuccess(res, { complaint }, 'Status updated');
   } catch (error) {
@@ -133,12 +141,16 @@ exports.replyToComplaint = async (req, res, next) => {
     const complaint = await Complaint.findById(req.params.id);
     
     if (!complaint) return sendError(res, 'Complaint not found', 404);
+    if (!message || !message.trim()) return sendError(res, 'Message is required', 400);
     
     const history = await ComplaintHistory.create({
       complaint: complaint._id,
-      action: 'Replied',
-      actor: req.user.id,
-      message
+      action: 'Comment Added',
+      description: message.trim(),
+      performedBy: req.user.id || req.user._id,
+      performedByName: req.user.name,
+      performedByRole: req.user.role,
+      message: message.trim()
     });
     
     return sendSuccess(res, { history }, 'Reply added');
@@ -149,32 +161,51 @@ exports.replyToComplaint = async (req, res, next) => {
 
 exports.resolveComplaint = async (req, res, next) => {
   try {
-    const { resolutionNote } = req.body;
+    const { resolutionNote, note } = req.body;
+    const resolvedNote = resolutionNote || note || 'Complaint marked as resolved';
     const complaint = await Complaint.findById(req.params.id);
     
     if (!complaint) return sendError(res, 'Complaint not found', 404);
     
     complaint.status = 'Resolved';
-    complaint.resolvedAt = Date.now();
-    complaint.resolutionNote = resolutionNote;
+    complaint.resolvedAt = new Date();
+    complaint.resolution = {
+      note: resolvedNote,
+      resolvedBy: req.user.id || req.user._id,
+      resolvedByName: req.user.name,
+      resolvedAt: new Date()
+    };
     await complaint.save();
     
     await ComplaintHistory.create({
       complaint: complaint._id,
       action: 'Resolved',
-      actor: req.user.id,
-      message: resolutionNote
+      description: resolvedNote,
+      performedBy: req.user.id || req.user._id,
+      performedByName: req.user.name,
+      performedByRole: req.user.role,
+      newStatus: 'Resolved',
+      message: resolvedNote
     });
     
-    await Notification.create({
-      recipient: complaint.student,
-      title: 'Complaint Resolved',
-      message: `Your complaint "${complaint.title}" has been resolved.`,
-      relatedEntity: complaint._id,
-      entityModel: 'Complaint'
-    });
+    try {
+      const studentTarget = complaint.studentId || complaint.student;
+      if (studentTarget) {
+        await Notification.create({
+          recipient: studentTarget,
+          title: 'Complaint Resolved',
+          message: `Your complaint "${complaint.title}" has been resolved.`,
+          type: 'complaint_resolved',
+          entityId: complaint._id,
+          entityType: 'Complaint',
+          link: `/student/complaints/${complaint._id}`
+        });
+      }
+    } catch (notifErr) {
+      console.warn('Notification error on resolve:', notifErr.message);
+    }
     
-    await createAuditLog(req.user.id, 'RESOLVE_COMPLAINT', 'Complaint', complaint._id, 'Complaint resolved', req);
+    await createAuditLog(req.user.id || req.user._id, 'RESOLVE_COMPLAINT', 'Complaint', complaint._id, 'Complaint resolved', req);
     
     return sendSuccess(res, { complaint }, 'Complaint resolved');
   } catch (error) {
@@ -195,11 +226,15 @@ exports.rejectComplaint = async (req, res, next) => {
     await ComplaintHistory.create({
       complaint: complaint._id,
       action: 'Rejected',
-      actor: req.user.id,
-      message: reason
+      description: reason || 'Complaint rejected by officer',
+      performedBy: req.user.id || req.user._id,
+      performedByName: req.user.name,
+      performedByRole: req.user.role,
+      newStatus: 'Rejected',
+      message: reason || ''
     });
     
-    await createAuditLog(req.user.id, 'REJECT_COMPLAINT', 'Complaint', complaint._id, 'Complaint rejected', req);
+    await createAuditLog(req.user.id || req.user._id, 'REJECT_COMPLAINT', 'Complaint', complaint._id, 'Complaint rejected', req);
     
     return sendSuccess(res, { complaint }, 'Complaint rejected');
   } catch (error) {
@@ -214,18 +249,20 @@ exports.escalateComplaint = async (req, res, next) => {
     
     if (!complaint) return sendError(res, 'Complaint not found', 404);
     
-    complaint.status = 'Escalated';
-    // Logic for next escalation level should be handled here
-    await complaint.save();
+    const escalationService = require('../services/escalationService');
+    await escalationService.escalateComplaint(complaint);
     
     await ComplaintHistory.create({
       complaint: complaint._id,
       action: 'Escalated',
-      actor: req.user.id,
-      message: reason
+      description: reason || 'Complaint manually escalated',
+      performedBy: req.user.id || req.user._id,
+      performedByName: req.user.name,
+      performedByRole: req.user.role,
+      message: reason || ''
     });
     
-    await createAuditLog(req.user.id, 'ESCALATE_COMPLAINT', 'Complaint', complaint._id, 'Complaint manually escalated', req);
+    await createAuditLog(req.user.id || req.user._id, 'ESCALATE_COMPLAINT', 'Complaint', complaint._id, 'Complaint manually escalated', req);
     
     return sendSuccess(res, { complaint }, 'Complaint escalated');
   } catch (error) {
@@ -239,7 +276,10 @@ exports.reopenComplaint = async (req, res, next) => {
     const complaint = await Complaint.findById(req.params.id);
     
     if (!complaint) return sendError(res, 'Complaint not found', 404);
-    if (complaint.student.toString() !== req.user.id) return sendError(res, 'Not authorized', 403);
+    const studentOwner = complaint.studentId?.toString() || complaint.student?.toString();
+    if (studentOwner && studentOwner !== req.user.id && studentOwner !== req.user._id?.toString()) {
+      return sendError(res, 'Not authorized', 403);
+    }
     if (complaint.status !== 'Resolved') return sendError(res, 'Only resolved complaints can be reopened', 400);
     
     complaint.status = 'Pending';
@@ -248,11 +288,14 @@ exports.reopenComplaint = async (req, res, next) => {
     await ComplaintHistory.create({
       complaint: complaint._id,
       action: 'Reopened',
-      actor: req.user.id,
-      message: reason
+      description: reason || 'Complaint reopened by student',
+      performedBy: req.user.id || req.user._id,
+      performedByName: req.user.name,
+      performedByRole: req.user.role,
+      message: reason || ''
     });
     
-    await createAuditLog(req.user.id, 'REOPEN_COMPLAINT', 'Complaint', complaint._id, 'Complaint reopened by student', req);
+    await createAuditLog(req.user.id || req.user._id, 'REOPEN_COMPLAINT', 'Complaint', complaint._id, 'Complaint reopened by student', req);
     
     return sendSuccess(res, { complaint }, 'Complaint reopened');
   } catch (error) {
@@ -263,7 +306,10 @@ exports.reopenComplaint = async (req, res, next) => {
 exports.checkDuplicates = async (req, res, next) => {
   try {
     const { title, description } = req.body;
-    const duplicates = await aiService.detectDuplicates(title, description);
+    const existingComplaints = await Complaint.find({ status: { $nin: ['Resolved', 'Rejected', 'Closed'] } })
+      .select('title description status complaintNumber')
+      .limit(50);
+    const duplicates = await aiService.detectDuplicates(title, description, existingComplaints);
     return sendSuccess(res, { duplicates }, 'Checked for duplicates');
   } catch (error) {
     next(error);
@@ -272,9 +318,11 @@ exports.checkDuplicates = async (req, res, next) => {
 
 exports.getAISuggestions = async (req, res, next) => {
   try {
-    const { description } = req.body;
-    const suggestions = await aiService.analyzeComplaint(description);
-    return sendSuccess(res, { suggestions }, 'AI suggestions generated');
+    const { title, description, text } = req.body || {};
+    const parsedText = description || text || req.query.description || req.query.text || '';
+    const parsedTitle = title || req.query.title || '';
+    const suggestions = await aiService.categorizeComplaint(parsedTitle, parsedText);
+    return sendSuccess(res, suggestions, 'AI suggestions generated');
   } catch (error) {
     next(error);
   }
@@ -283,7 +331,7 @@ exports.getAISuggestions = async (req, res, next) => {
 exports.getComplaintTimeline = async (req, res, next) => {
   try {
     const history = await ComplaintHistory.find({ complaint: req.params.id })
-      .populate('actor', 'name role')
+      .populate('performedBy', 'name role email')
       .sort({ createdAt: 1 });
       
     return sendSuccess(res, { timeline: history }, 'Timeline retrieved');

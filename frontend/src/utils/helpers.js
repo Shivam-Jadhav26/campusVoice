@@ -93,7 +93,6 @@ export const getRoleDashboardPath = (role) => {
     tg: '/tg/dashboard', 
     class_incharge: '/class-incharge/dashboard', 
     hod: '/hod/dashboard', 
-    committee: '/committee/dashboard', 
     admin: '/admin/dashboard' 
   };
   return paths[role] || '/login';

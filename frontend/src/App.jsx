@@ -32,10 +32,6 @@ import HODDashboard from './pages/hod/HODDashboard';
 import HODComplaints from './pages/hod/HODComplaints';
 import HODAnalytics from './pages/hod/HODAnalytics';
 
-// Committee
-import CommitteeDashboard from './pages/committee/CommitteeDashboard';
-import CommitteeComplaints from './pages/committee/CommitteeComplaints';
-
 // Admin
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
@@ -80,7 +76,6 @@ const RoleBasedRedirect = () => {
     case 'tg': return <Navigate to="/tg/dashboard" replace />;
     case 'class_incharge': return <Navigate to="/class-incharge/dashboard" replace />;
     case 'hod': return <Navigate to="/hod/dashboard" replace />;
-    case 'committee': return <Navigate to="/committee/dashboard" replace />;
     case 'admin': return <Navigate to="/admin/dashboard" replace />;
     default: return <Navigate to="/login" replace />;
   }
@@ -118,14 +113,14 @@ const App = () => {
             {/* Teacher Routes */}
             <Route path="/teacher/dashboard" element={<ProtectedRoute allowedRoles={['teacher']}><TeacherDashboard /></ProtectedRoute>} />
             <Route path="/teacher/complaints" element={<ProtectedRoute allowedRoles={['teacher']}><TeacherComplaints /></ProtectedRoute>} />
-            <Route path="/teacher/complaints/:id" element={<ProtectedRoute allowedRoles={['teacher', 'tg', 'class_incharge', 'hod', 'committee', 'admin']}><ComplaintDetail /></ProtectedRoute>} />
+            <Route path="/teacher/complaints/:id" element={<ProtectedRoute allowedRoles={['teacher', 'tg', 'class_incharge', 'hod', 'admin']}><ComplaintDetail /></ProtectedRoute>} />
             <Route path="/teacher/notifications" element={<ProtectedRoute allowedRoles={['teacher']}><NotificationsPage /></ProtectedRoute>} />
             <Route path="/teacher/profile" element={<ProtectedRoute allowedRoles={['teacher']}><ProfilePage /></ProtectedRoute>} />
 
             {/* TG Routes */}
             <Route path="/tg/dashboard" element={<ProtectedRoute allowedRoles={['tg']}><TGDashboard /></ProtectedRoute>} />
             <Route path="/tg/complaints" element={<ProtectedRoute allowedRoles={['tg']}><TGComplaints /></ProtectedRoute>} />
-            <Route path="/tg/complaints/:id" element={<ProtectedRoute allowedRoles={['tg', 'teacher', 'class_incharge', 'hod', 'committee', 'admin']}><ComplaintDetail /></ProtectedRoute>} />
+            <Route path="/tg/complaints/:id" element={<ProtectedRoute allowedRoles={['tg', 'teacher', 'class_incharge', 'hod', 'admin']}><ComplaintDetail /></ProtectedRoute>} />
             <Route path="/tg/notifications" element={<ProtectedRoute allowedRoles={['tg']}><NotificationsPage /></ProtectedRoute>} />
             <Route path="/tg/profile" element={<ProtectedRoute allowedRoles={['tg']}><ProfilePage /></ProtectedRoute>} />
 
@@ -143,12 +138,6 @@ const App = () => {
             <Route path="/hod/analytics" element={<ProtectedRoute allowedRoles={['hod']}><HODAnalytics /></ProtectedRoute>} />
             <Route path="/hod/notifications" element={<ProtectedRoute allowedRoles={['hod']}><NotificationsPage /></ProtectedRoute>} />
             <Route path="/hod/profile" element={<ProtectedRoute allowedRoles={['hod']}><ProfilePage /></ProtectedRoute>} />
-
-            {/* Committee Routes */}
-            <Route path="/committee/dashboard" element={<ProtectedRoute allowedRoles={['committee']}><CommitteeDashboard /></ProtectedRoute>} />
-            <Route path="/committee/complaints" element={<ProtectedRoute allowedRoles={['committee']}><CommitteeComplaints /></ProtectedRoute>} />
-            <Route path="/committee/complaints/:id" element={<ProtectedRoute allowedRoles={['committee']}><ComplaintDetail /></ProtectedRoute>} />
-            <Route path="/committee/notifications" element={<ProtectedRoute allowedRoles={['committee']}><NotificationsPage /></ProtectedRoute>} />
 
             {/* Admin Routes */}
             <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />

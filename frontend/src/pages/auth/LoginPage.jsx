@@ -23,19 +23,18 @@ import { useAuth } from '../../context/AuthContext';
 
 const rolePresets = {
   student: [
-    { role: 'Student 1', name: 'Alex Johnson', email: 'student@demo.com', pass: 'Password@123', meta: 'SE-A • CE2024001' },
+    { role: 'Student 1', name: 'Aarav Patel', email: 'student@demo.com', pass: 'Password@123', meta: 'SE-A • CE2024001' },
     { role: 'Student 2', name: 'Priya Sharma', email: 'student2@demo.com', pass: 'Password@123', meta: 'TE-B • CE2024045' },
-    { role: 'Student 3', name: 'David Miller', email: 'student3@demo.com', pass: 'Password@123', meta: 'BE-A • IT2024012' }
+    { role: 'Student 3', name: 'Rohan Verma', email: 'student3@demo.com', pass: 'Password@123', meta: 'BE-A • IT2024012' }
   ],
   faculty: [
-    { role: 'Teacher', name: 'Prof. Robert Brown', email: 'teacher@demo.com', pass: 'Password@123', meta: 'Faculty Reviewer' },
+    { role: 'Teacher', name: 'Prof. Rajesh Kulkarni', email: 'teacher@demo.com', pass: 'Password@123', meta: 'Faculty Reviewer' },
     { role: 'Teacher Guardian', name: 'Prof. Vikram Mehta', email: 'tg@demo.com', pass: 'Password@123', meta: '1st Escalation Tier' },
-    { role: 'Class Incharge', name: 'Prof. Sarah Wilson', email: 'classincharge@demo.com', pass: 'Password@123', meta: 'Class SE-A' },
-    { role: 'HOD', name: 'Dr. Arthur Davis', email: 'hod@demo.com', pass: 'Password@123', meta: 'Head of Department' },
-    { role: 'Committee', name: 'Dr. Elena Rostova', email: 'committee@demo.com', pass: 'Password@123', meta: 'Apex Committee' }
+    { role: 'Class Incharge', name: 'Prof. Sneha Deshmukh', email: 'classincharge@demo.com', pass: 'Password@123', meta: 'Class SE-A' },
+    { role: 'HOD', name: 'Dr. Anand Joshi', email: 'hod@demo.com', pass: 'Password@123', meta: 'Head of Department' }
   ],
   admin: [
-    { role: 'Super Admin', name: 'Super Admin', email: 'admin@demo.com', pass: 'Password@123', meta: 'Full System Control' }
+    { role: 'Super Admin', name: 'Rajesh Sharma', email: 'admin@demo.com', pass: 'Password@123', meta: 'Full System Control' }
   ]
 };
 
@@ -78,9 +77,6 @@ export default function LoginPage() {
           break;
         case 'hod':
           navigate('/hod/dashboard');
-          break;
-        case 'committee':
-          navigate('/committee/dashboard');
           break;
         case 'admin':
           navigate('/admin/dashboard');
@@ -141,7 +137,7 @@ export default function LoginPage() {
             </h1>
 
             <p className="mt-4 text-base sm:text-lg text-slate-300/90 leading-relaxed font-normal">
-              A transparent, hierarchical platform connecting students directly with Teachers, Guardians, HODs, and Apex Committees with automated SLA tracking.
+              A transparent, hierarchical platform connecting students directly with Teachers, Guardians, and HODs with automated SLA tracking.
             </p>
           </div>
         </div>
@@ -160,8 +156,8 @@ export default function LoginPage() {
             <div className="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center mb-3">
               <ShieldCheck className="w-5 h-5" />
             </div>
-            <h4 className="text-sm font-semibold text-white">5-Tier Escalation</h4>
-            <p className="text-xs text-slate-400 mt-1">SLA-backed automatic escalation from Teacher to Apex Committee.</p>
+            <h4 className="text-sm font-semibold text-white">4-Tier Escalation</h4>
+            <p className="text-xs text-slate-400 mt-1">SLA-backed automatic escalation from Teacher up to Department HOD.</p>
           </div>
 
           <div className="p-4 rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-md hover:bg-white/[0.07] transition-all">

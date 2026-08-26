@@ -4,8 +4,7 @@ const {
   getStudentDashboard,
   getStaffDashboard,
   getHODDashboard,
-  getAdminDashboard,
-  getCommitteeDashboard
+  getAdminDashboard
 } = require('../controllers/dashboardController');
 const { verifyJWT, authorizeRoles } = require('../middleware/auth');
 
@@ -15,6 +14,5 @@ router.get('/student', authorizeRoles('student'), getStudentDashboard);
 router.get('/staff', authorizeRoles('teacher', 'tg', 'class_incharge'), getStaffDashboard);
 router.get('/hod', authorizeRoles('hod'), getHODDashboard);
 router.get('/admin', authorizeRoles('admin'), getAdminDashboard);
-router.get('/committee', authorizeRoles('committee'), getCommitteeDashboard);
 
 module.exports = router;

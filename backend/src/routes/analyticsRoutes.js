@@ -9,8 +9,8 @@ const { verifyJWT, authorizeRoles } = require('../middleware/auth');
 
 router.use(verifyJWT);
 
-router.get('/complaints', authorizeRoles('hod', 'admin', 'committee'), getComplaintAnalytics);
-router.get('/feedback', authorizeRoles('hod', 'admin', 'committee'), getFeedbackAnalytics);
+router.get('/complaints', authorizeRoles('hod', 'admin'), getComplaintAnalytics);
+router.get('/feedback', authorizeRoles('hod', 'admin'), getFeedbackAnalytics);
 router.get('/departments', authorizeRoles('admin'), getDepartmentAnalytics);
 
 module.exports = router;

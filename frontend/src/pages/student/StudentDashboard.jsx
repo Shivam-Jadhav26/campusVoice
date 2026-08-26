@@ -219,7 +219,7 @@ export default function StudentDashboard() {
             </div>
           </div>
           <div className="mt-3 flex items-center gap-1.5 text-xs text-rose-700 font-medium">
-            <span>HOD / Committee tier</span>
+            <span>HOD tier</span>
           </div>
         </div>
       </div>

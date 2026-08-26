@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const CATEGORIES = ['Academic', 'Infrastructure', 'Laboratory', 'Hostel', 'Library', 'Mess', 'Faculty', 'Transport', 'IT', 'Other'];
 const PRIORITIES = ['Low', 'Medium', 'High', 'Critical'];
 const STATUSES = ['Pending', 'In Progress', 'Resolved', 'Rejected', 'Escalated', 'Reopened', 'Closed'];
-const ESCALATION_LEVELS = ['Teacher', 'TG', 'Class Incharge', 'HOD', 'Committee'];
+const ESCALATION_LEVELS = ['Teacher', 'TG', 'Class Incharge', 'HOD'];
 
 const attachmentSchema = new mongoose.Schema({
   filename: String,
@@ -42,7 +42,7 @@ const complaintSchema = new mongoose.Schema(
 
     // Status
     status: { type: String, enum: STATUSES, default: 'Pending', index: true },
-    escalationLevel: { type: Number, default: 0, min: 0, max: 4 }, // 0=Teacher..4=Committee
+    escalationLevel: { type: Number, default: 0, min: 0, max: 3 }, // 0=Teacher..3=HOD
 
     // Deadlines
     deadline: { type: Date, index: true },

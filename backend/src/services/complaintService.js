@@ -104,8 +104,6 @@ const buildComplaintQuery = (param1, param2, param3, param4) => {
       orConditions.push({ department });
     }
     query.$or = orConditions;
-  } else if (userRole === 'committee') {
-    query.$or = [{ escalationLevel: 4 }, { isEscalated: true }];
   }
 
   if (filters.search) {

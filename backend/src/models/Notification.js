@@ -7,7 +7,11 @@ const notificationSchema = new mongoose.Schema(
     message: { type: String, required: true },
     type: {
       type: String,
-      enum: ['complaint', 'feedback', 'academic_review', 'system', 'escalation', 'resolution'],
+      enum: [
+        'complaint', 'feedback', 'academic_review', 'system', 'escalation', 'resolution',
+        'complaint_created', 'complaint_assigned', 'complaint_escalated', 'complaint_resolved',
+        'complaint_updated', 'academic_review_updated'
+      ],
       default: 'system',
     },
     entityId: { type: mongoose.Schema.Types.ObjectId }, // complaint / feedback / review ID

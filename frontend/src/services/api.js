@@ -2,9 +2,6 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: '/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 api.interceptors.request.use(
@@ -12,6 +9,12 @@ api.interceptors.request.use(
     const token = localStorage.getItem('cv_access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    // Let Axios & browser set boundary header automatically for FormData
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    } else if (!config.headers['Content-Type']) {
+      config.headers['Content-Type'] = 'application/json';
     }
     return config;
   },
@@ -101,7 +104,6 @@ export const dashboardAPI = {
   getStaffDashboard: () => api.get('/dashboard/staff'),
   getHODDashboard: () => api.get('/dashboard/hod'),
   getAdminDashboard: () => api.get('/dashboard/admin'),
-  getCommitteeDashboard: () => api.get('/dashboard/committee'),
 };
 
 export const analyticsAPI = {

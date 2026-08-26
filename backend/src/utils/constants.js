@@ -1,8 +1,8 @@
-const ROLES = ['student', 'teacher', 'tg', 'class_incharge', 'hod', 'committee', 'admin'];
+const ROLES = ['student', 'teacher', 'tg', 'class_incharge', 'hod', 'admin'];
 
-const ESCALATION_CHAIN = ['Teacher', 'TG', 'Class Incharge', 'HOD', 'Committee'];
+const ESCALATION_CHAIN = ['Teacher', 'TG', 'Class Incharge', 'HOD'];
 
-const ESCALATION_ROLES = ['teacher', 'tg', 'class_incharge', 'hod', 'committee'];
+const ESCALATION_ROLES = ['teacher', 'tg', 'class_incharge', 'hod'];
 
 const COMPLAINT_CATEGORIES = [
   'Academic', 'Infrastructure', 'Laboratory', 'Hostel', 

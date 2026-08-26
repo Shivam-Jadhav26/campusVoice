@@ -172,18 +172,3 @@ exports.getAdminDashboard = async (req, res, next) => {
   }
 };
 
-exports.getCommitteeDashboard = async (req, res, next) => {
-  try {
-    const escalated = await Complaint.find({
-      $or: [{ status: 'Escalated' }, { escalationLevel: { $gte: 3 } }]
-    }).sort({ createdAt: -1 });
-
-    return sendSuccess(res, {
-      escalatedComplaints: escalated,
-      count: escalated.length,
-      recentComplaints: escalated.slice(0, 5)
-    }, 'Committee dashboard data');
-  } catch (error) {
-    next(error);
-  }
-};

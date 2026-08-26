@@ -8,8 +8,8 @@ A production-grade MERN stack complaint management platform for colleges and uni
 
 ### Core Capabilities
 - 🔐 **JWT Authentication & RBAC**: Access & Refresh token rotation with strict role gating.
-- 👥 **7 Dedicated Roles**: Student, Teacher, Tutor Guardian (TG), Class Incharge, HOD, Grievance Committee, Admin.
-- ⚡ **5-Tier SLA Escalation Engine**: Automated background cron job escalating overdue tickets across levels.
+- 👥 **6 Dedicated Roles**: Student, Teacher, Tutor Guardian (TG), Class Incharge, HOD, Admin.
+- ⚡ **4-Tier SLA Escalation Engine**: Automated background cron job escalating overdue tickets across levels.
 - 🔔 **Real-Time Notification System**: Socket.IO powered alerts on ticket changes and decisions.
 - 🤖 **AI Complaint Triaging & Duplicate Detection**: Instant sentiment classification and duplicate checks.
 - 📊 **Executive Analytics**: Recharts-powered trend graphs, SLA compliance velocity, and category distributions.
@@ -17,9 +17,9 @@ A production-grade MERN stack complaint management platform for colleges and uni
 - 🎓 **Academic Review & Re-evaluation**: Re-marking requests with scanned copy uploads.
 - 📝 **Immutable Audit Trail**: Security-critical user action recording.
 
-### 5-Tier Escalation Chain
+### 4-Tier Escalation Chain
 ```
-Level 0: Teacher (24h) ➔ Level 1: TG (24h) ➔ Level 2: Class Incharge (24h) ➔ Level 3: HOD (24h) ➔ Level 4: Committee (Final)
+Level 0: Teacher (24h) ➔ Level 1: TG (24h) ➔ Level 2: Class Incharge (24h) ➔ Level 3: HOD (Final)
 ```
 
 ---
@@ -41,7 +41,7 @@ Campus Voice/
 ├── frontend/              # React 18 + Vite + Tailwind UI
 │   └── src/
 │       ├── components/    # Reusable UI & Layout (DashboardLayout, Sidebar, Navbar)
-│       ├── pages/         # 7 Role Dashboards (student, teacher, tg, class_incharge, hod, committee, admin)
+│       ├── pages/         # 6 Role Dashboards (student, teacher, tg, class_incharge, hod, admin)
 │       ├── context/       # AuthContext & NotificationContext
 │       └── services/      # Axios API services
 │
@@ -87,15 +87,14 @@ npm run seed
 ## 🌱 Demo Accounts
 Default password for all accounts: `Password@123`
 
-| Role | Email | Access |
-|---|---|---|
-| **Student** | `student@demo.com` | File grievances, academic reviews, anonymous feedback |
-| **Teacher** | `teacher@demo.com` | Subject ticket resolution within 24h SLA |
-| **Tutor Guardian** | `tg@demo.com` | Level-1 cohort escalation review |
-| **Class Incharge** | `classincharge@demo.com` | Level-2 class cohort management |
-| **HOD** | `hod@demo.com` | Level-3 departmental moderation & analytics |
-| **Committee** | `committee@demo.com` | Level-4 final grievance hearings |
-| **Admin** | `admin@demo.com` | User management, departments, audit logs, system settings |
+| Role | Name | Email | Access |
+|---|---|---|---|
+| **Student** | Aarav Patel | `student@demo.com` | File grievances, academic reviews, anonymous feedback |
+| **Teacher** | Prof. Rajesh Kulkarni | `teacher@demo.com` | Subject ticket resolution within 24h SLA |
+| **Tutor Guardian** | Prof. Vikram Mehta | `tg@demo.com` | Level-1 cohort escalation review |
+| **Class Incharge** | Prof. Sneha Deshmukh | `classincharge@demo.com` | Level-2 class cohort management |
+| **HOD** | Dr. Anand Joshi | `hod@demo.com` | Level-3 departmental moderation & analytics |
+| **Admin** | Rajesh Sharma | `admin@demo.com` | User management, departments, audit logs, system settings |
 
 ---
 

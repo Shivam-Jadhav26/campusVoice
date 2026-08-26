@@ -9,7 +9,7 @@ const getNextHandlerForLevel = async (level, department) => {
   const role = ESCALATION_ROLES[level];
   let query = { role };
 
-  if (role !== 'committee' && role !== 'admin' && department) {
+  if (role !== 'admin' && department) {
     let deptId = department;
     if (typeof department === 'string' && !mongoose.Types.ObjectId.isValid(department)) {
       const deptDoc = await Department.findOne({ name: { $regex: new RegExp(`^${department}$`, 'i') } });
@@ -21,7 +21,7 @@ const getNextHandlerForLevel = async (level, department) => {
   }
 
   let handler = await User.findOne(query);
-  if (!handler && role !== 'committee' && role !== 'admin') {
+  if (!handler && role !== 'admin') {
     handler = await User.findOne({ role });
   }
   return handler;
@@ -35,8 +35,8 @@ const getEscalationHoursForLevel = (level, escalationConfig = {}) => {
 const escalateComplaint = async (complaint) => {
   const currentLevel = complaint.escalationLevel || 0;
   
-  if (currentLevel >= 4) {
-    complaint.escalationLevel = 4;
+  if (currentLevel >= 3) {
+    complaint.escalationLevel = 3;
     await complaint.save();
     return complaint;
   }

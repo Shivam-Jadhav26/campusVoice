@@ -61,8 +61,8 @@ exports.getAcademicReviews = async (req, res, next) => {
     
     if (req.user.role === 'Student') {
       query.student = req.user.id;
-    } else if (req.user.role === 'Teacher') {
-      query.assignedTeacher = req.user.id;
+    } else if (req.user.role === 'Teacher' || req.user.role === 'TG' || req.user.role === 'Class Incharge') {
+      query.assignedFaculty = req.user.id;
     } else if (req.user.role === 'HOD') {
       // Logic for HOD department
       const deptUsers = await User.find({ department: req.user.department }).select('_id');
@@ -71,7 +71,7 @@ exports.getAcademicReviews = async (req, res, next) => {
     
     const reviews = await AcademicReview.find(query)
       .populate('student', 'name email')
-      .populate('assignedTeacher', 'name')
+      .populate('assignedFaculty', 'name')
       .populate('subject', 'name code')
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
@@ -89,7 +89,7 @@ exports.getAcademicReviewById = async (req, res, next) => {
   try {
     const review = await AcademicReview.findById(req.params.id)
       .populate('student', 'name email')
-      .populate('assignedTeacher', 'name')
+      .populate('assignedFaculty', 'name')
       .populate('assignedHOD', 'name')
       .populate('subject', 'name code');
       

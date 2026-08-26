@@ -36,7 +36,7 @@ export default function SettingsPage() {
               <input type="number" value={escalation.classIncharge} onChange={e => setEscalation({...escalation, classIncharge: e.target.value})} className="w-full border rounded-lg p-2 focus:ring-indigo-500" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">HOD to Committee</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">HOD Resolution SLA</label>
               <input type="number" value={escalation.hod} onChange={e => setEscalation({...escalation, hod: e.target.value})} className="w-full border rounded-lg p-2 focus:ring-indigo-500" />
             </div>
           </div>
