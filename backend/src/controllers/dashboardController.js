@@ -140,13 +140,41 @@ exports.getHODDashboard = async (req, res, next) => {
 
 exports.getAdminDashboard = async (req, res, next) => {
   try {
+    const Department = require('../models/Department');
+
     const totalStudents = await User.countDocuments({ role: 'student' });
     const totalFaculty = await User.countDocuments({ role: { $in: ['teacher', 'tg', 'class_incharge', 'hod'] } });
+    const totalUsers = totalStudents + totalFaculty;
     const totalComplaints = await Complaint.countDocuments();
+
+    // Resolved today
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const resolvedToday = await Complaint.countDocuments({
+      status: 'Resolved',
+      resolvedAt: { $gte: startOfDay }
+    });
+
+    // Active departments
+    const activeDepartments = await Department.countDocuments({ isActive: true });
 
     const statusBreakdown = await Complaint.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]);
     const deptBreakdown = await Complaint.aggregate([{ $group: { _id: '$department', count: { $sum: 1 } } }]);
     const catBreakdown = await Complaint.aggregate([{ $group: { _id: '$category', count: { $sum: 1 } } }]);
+
+    // Chart-ready department complaints: [{name, count}]
+    const deptComplaints = deptBreakdown.map(d => ({ name: d._id || 'Unknown', count: d.count }));
+
+    // Monthly trend: [{month, count}] — last 6 months
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    const monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthlyTrendRaw = await Complaint.aggregate([
+      { $match: { createdAt: { $gte: sixMonthsAgo } } },
+      { $group: { _id: { month: { $month: '$createdAt' }, year: { $year: '$createdAt' } }, count: { $sum: 1 } } },
+      { $sort: { '_id.year': 1, '_id.month': 1 } }
+    ]);
+    const monthlyTrend = monthlyTrendRaw.map(m => ({ month: monthNames[m._id.month], count: m.count }));
 
     const resolved = await Complaint.countDocuments({ status: 'Resolved' });
     const escalated = await Complaint.countDocuments({ status: 'Escalated' });
@@ -157,15 +185,20 @@ exports.getAdminDashboard = async (req, res, next) => {
     const recentComplaints = await Complaint.find().sort({ createdAt: -1 }).limit(5);
 
     return sendSuccess(res, {
+      totalUsers,
       totalStudents,
       totalFaculty,
       totalComplaints,
+      resolvedToday,
+      activeDepartments,
       statusBreakdown,
       deptBreakdown,
+      deptComplaints,
       catBreakdown,
       resolutionRate,
       escalationRate,
-      recentComplaints
+      recentComplaints,
+      monthlyTrend
     }, 'Admin dashboard data');
   } catch (error) {
     next(error);

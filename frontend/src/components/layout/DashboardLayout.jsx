@@ -19,6 +19,7 @@ const getPageTitle = (pathname) => {
     'departments': 'Departments',
     'analytics': 'Analytics',
     'logs': 'Audit Logs',
+    'audit-logs': 'Audit Logs',
     'settings': 'Settings',
     'notifications': 'Notifications',
     'profile': 'Profile'

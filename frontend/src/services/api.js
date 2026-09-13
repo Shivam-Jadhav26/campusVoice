@@ -80,7 +80,7 @@ export const feedbackAPI = {
   create: (data) => api.post('/feedback', data),
   getAll: (params) => api.get('/feedback', { params }),
   getById: (id) => api.get(`/feedback/${id}`),
-  review: (id, data) => api.post(`/feedback/${id}/review`, data),
+  review: (id, data) => api.put(`/feedback/${id}/review`, data),
   getAnalytics: (params) => api.get('/feedback/analytics', { params }),
 };
 
@@ -118,7 +118,7 @@ export const userAPI = {
   getById: (id) => api.get(`/users/${id}`),
   create: (data) => api.post('/users', data),
   update: (id, data) => api.put(`/users/${id}`, data),
-  toggleStatus: (id) => api.put(`/users/${id}/toggle-status`),
+  toggleStatus: (id) => api.patch(`/users/${id}/toggle-status`),
   delete: (id) => api.delete(`/users/${id}`),
   getDepartments: () => api.get('/departments'),
   createDepartment: (data) => api.post('/departments', data),
@@ -137,6 +137,11 @@ export const departmentAPI = {
   update: (id, data) => api.put(`/users/departments/${id}`, data),
   delete: (id) => api.delete(`/users/departments/${id}`),
   getTeachers: (deptId) => api.get(`/users/departments/${deptId}/teachers`),
+};
+
+export const settingsAPI = {
+  get: () => api.get('/settings'),
+  update: (data) => api.put('/settings', data),
 };
 
 export default api;

@@ -20,6 +20,7 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 const auditLogRoutes = require('./routes/auditLogRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 
 // Jobs
 const { startEscalationJob } = require('./jobs/escalationJob');
@@ -57,6 +58,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/audit-logs', auditLogRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // 404
 app.use((req, res) => res.status(404).json({ success: false, message: 'Route not found' }));

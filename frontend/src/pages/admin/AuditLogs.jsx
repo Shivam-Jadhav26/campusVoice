@@ -29,7 +29,7 @@ export default function AuditLogs() {
   const filtered = logs.filter(l => {
     const term = search.toLowerCase();
     return (l.action || '').toLowerCase().includes(term) ||
-           (l.user?.name || l.user?.email || '').toLowerCase().includes(term) ||
+           (l.userId?.name || l.userId?.email || l.userName || '').toLowerCase().includes(term) ||
            (l.entityType || '').toLowerCase().includes(term);
   });
 
@@ -83,7 +83,7 @@ export default function AuditLogs() {
                         {new Date(log.createdAt || Date.now()).toLocaleString()}
                       </td>
                       <td className="px-6 py-4 font-bold text-slate-900 whitespace-nowrap">
-                        {log.user?.name || log.user?.email || 'System Engine'}
+                        {log.userId?.name || log.userId?.email || log.userName || 'System Engine'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="px-2.5 py-1 rounded-full font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">

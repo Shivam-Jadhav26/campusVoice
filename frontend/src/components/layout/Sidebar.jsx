@@ -72,10 +72,12 @@ const Sidebar = ({ isOpen, onClose }) => {
       case 'admin':
         return [
           { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
+          { label: 'Complaints', path: '/admin/complaints', icon: FileText },
+          { label: 'Feedback', path: '/admin/feedback', icon: MessageSquare },
           { label: 'Users', path: '/admin/users', icon: Users },
           { label: 'Departments', path: '/admin/departments', icon: Building2 },
           { label: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
-          { label: 'Audit Logs', path: '/admin/logs', icon: ShieldAlert },
+          { label: 'Audit Logs', path: '/admin/audit-logs', icon: ShieldAlert },
           { label: 'Settings', path: '/admin/settings', icon: Settings },
           { label: 'Notifications', path: '/admin/notifications', icon: Bell },
         ];
