@@ -7,7 +7,7 @@ const { createAuditLog } = require('./auditLogController');
 
 exports.getUsers = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, search, role, department } = req.query;
+    const { page = 1, limit = 10, search, role, department, currentYear, userClass } = req.query;
     
     const query = {};
     if (search) {
@@ -17,7 +17,9 @@ exports.getUsers = async (req, res, next) => {
       ];
     }
     if (role) query.role = role;
-    if (department) query.department = department;
+    if (department) query.departmentName = department;
+    if (currentYear) query.currentYear = currentYear;
+    if (userClass) query.class = userClass;
     
     const users = await User.find(query)
       .populate('department', 'name')

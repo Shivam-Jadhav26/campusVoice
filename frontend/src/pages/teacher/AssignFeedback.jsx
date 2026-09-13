@@ -10,6 +10,9 @@ export default function AssignFeedback() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [studentSearch, setStudentSearch] = useState('');
+  const [departmentFilter, setDepartmentFilter] = useState('');
+  const [yearFilter, setYearFilter] = useState('');
+  const [classFilter, setClassFilter] = useState('');
   const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
@@ -35,11 +38,17 @@ export default function AssignFeedback() {
   };
 
   const handleSearch = async () => {
-    if (!studentSearch.trim()) return toast.error('Enter a roll number or name');
+    if (!studentSearch.trim() && !departmentFilter && !yearFilter && !classFilter) return toast.error('Enter a search term or select a filter');
     try {
       setIsSearching(true);
       // We assume userAPI.getAll allows searching by string
-      const res = await userAPI.getAll({ search: studentSearch, role: 'student' });
+      const query = { role: 'student' };
+      if (studentSearch.trim()) query.search = studentSearch.trim();
+      if (departmentFilter) query.department = departmentFilter;
+      if (yearFilter) query.currentYear = yearFilter;
+      if (classFilter) query.userClass = classFilter;
+      
+      const res = await userAPI.getAll(query);
       setStudents(res.data.data.users || res.data.data || []);
       if ((res.data.data.users || res.data.data || []).length === 0) {
         toast.info('No students found matching your search');
@@ -120,7 +129,42 @@ export default function AssignFeedback() {
               <h2 className="text-lg font-semibold text-gray-800">2. Assign to Student *</h2>
               
               {!selectedStudent ? (
-                <div>
+                <div className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <select 
+                      value={departmentFilter} 
+                      onChange={e => setDepartmentFilter(e.target.value)}
+                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm text-gray-700"
+                    >
+                      <option value="">All Departments</option>
+                      <option value="Information Technology">Information Technology</option>
+                      <option value="Artificial Intelligence and Machine Learning">AI & ML</option>
+                    </select>
+                    
+                    <select 
+                      value={yearFilter} 
+                      onChange={e => setYearFilter(e.target.value)}
+                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm text-gray-700"
+                    >
+                      <option value="">All Years</option>
+                      <option value="1st Year">1st Year</option>
+                      <option value="2nd Year">2nd Year</option>
+                      <option value="3rd Year">3rd Year</option>
+                      <option value="4th Year">4th Year</option>
+                    </select>
+                    
+                    <select 
+                      value={classFilter} 
+                      onChange={e => setClassFilter(e.target.value)}
+                      className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm text-gray-700"
+                    >
+                      <option value="">All Sections</option>
+                      <option value="SE-A">SE-A</option>
+                      <option value="SE-B">SE-B</option>
+                      <option value="TE-A">TE-A</option>
+                      <option value="BE-A">BE-A</option>
+                    </select>
+                  </div>
                   <div className="flex gap-2">
                     <input
                       type="text"
