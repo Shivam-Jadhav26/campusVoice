@@ -42,6 +42,8 @@ import DepartmentsPage from './pages/admin/DepartmentsPage';
 import SettingsPage from './pages/admin/SettingsPage';
 import AuditLogs from './pages/admin/AuditLogs';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
+import AdminComplaints from './pages/admin/AdminComplaints';
+import AdminFeedback from './pages/admin/AdminFeedback';
 
 // Shared
 import NotificationsPage from './pages/shared/NotificationsPage';
@@ -147,6 +149,9 @@ const App = () => {
 
             {/* Admin Routes */}
             <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/complaints" element={<ProtectedRoute allowedRoles={['admin']}><AdminComplaints /></ProtectedRoute>} />
+            <Route path="/admin/complaints/:id" element={<ProtectedRoute allowedRoles={['admin']}><ComplaintDetail /></ProtectedRoute>} />
+            <Route path="/admin/feedback" element={<ProtectedRoute allowedRoles={['admin']}><AdminFeedback /></ProtectedRoute>} />
             <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><UserManagement /></ProtectedRoute>} />
             <Route path="/admin/departments" element={<ProtectedRoute allowedRoles={['admin']}><DepartmentsPage /></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={['admin']}><SettingsPage /></ProtectedRoute>} />
