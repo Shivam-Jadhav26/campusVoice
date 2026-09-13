@@ -7,12 +7,19 @@ const { createAuditLog } = require('./auditLogController');
 
 exports.getUsers = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, search, role, department } = req.query;
+    const { page = 1, limit = 10, search, role, department, currentYear, userClass } = req.query;
     
     const query = {};
-    if (search) query.name = { $regex: search, $options: 'i' };
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { rollNumber: { $regex: search, $options: 'i' } }
+      ];
+    }
     if (role) query.role = role;
-    if (department) query.department = department;
+    if (department) query.departmentName = department;
+    if (currentYear) query.currentYear = currentYear;
+    if (userClass) query.class = userClass;
     
     const users = await User.find(query)
       .populate('department', 'name')
@@ -115,11 +122,13 @@ exports.deleteUser = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
   try {
-    const { name, phone, class: userClass, rollNumber, dob, currentYear, batch } = req.body;
+    const { name, phone, class: userClass, rollNumber, dob, currentYear, batch, teacherGuardian, classIncharge } = req.body;
     
-    const user = await User.findByIdAndUpdate(req.user.id, { 
-      name, phone, class: userClass, rollNumber, dob, currentYear, batch 
-    }, { new: true });
+    const updateData = { name, phone, class: userClass, rollNumber, dob, currentYear, batch };
+    if (teacherGuardian) updateData.teacherGuardian = teacherGuardian;
+    if (classIncharge) updateData.classIncharge = classIncharge;
+    
+    const user = await User.findByIdAndUpdate(req.user.id, updateData, { new: true });
     
     return sendSuccess(res, { user }, 'Profile updated');
   } catch (error) {

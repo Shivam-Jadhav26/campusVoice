@@ -41,6 +41,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           { label: 'My Complaints', path: '/student/complaints', icon: FileText },
           { label: 'Submit Complaint', path: '/student/complaints/create', icon: PlusCircle },
           { label: 'Feedback', path: '/student/feedback', icon: MessageSquare },
+          { label: 'Assigned Feedback', path: '/student/assigned-feedback', icon: FileText },
           { label: 'Academic Review', path: '/student/academic-review', icon: BookOpen },
           ...common
         ];
@@ -48,18 +49,21 @@ const Sidebar = ({ isOpen, onClose }) => {
         return [
           { label: 'Dashboard', path: '/teacher/dashboard', icon: LayoutDashboard },
           { label: 'Assigned Complaints', path: '/teacher/complaints', icon: FileText },
+          { label: 'Assign Feedback', path: '/teacher/assign-feedback', icon: FileText },
           ...common
         ];
       case 'tg':
         return [
           { label: 'Dashboard', path: '/tg/dashboard', icon: LayoutDashboard },
           { label: 'Complaints', path: '/tg/complaints', icon: FileText },
+          { label: 'Assign Feedback', path: '/teacher/assign-feedback', icon: FileText },
           ...common
         ];
       case 'class_incharge':
         return [
           { label: 'Dashboard', path: '/class-incharge/dashboard', icon: LayoutDashboard },
           { label: 'Complaints', path: '/class-incharge/complaints', icon: FileText },
+          { label: 'Assign Feedback', path: '/teacher/assign-feedback', icon: FileText },
           ...common
         ];
       case 'hod':
@@ -67,6 +71,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           { label: 'Dashboard', path: '/hod/dashboard', icon: LayoutDashboard },
           { label: 'Complaints', path: '/hod/complaints', icon: FileText },
           { label: 'Analytics', path: '/hod/analytics', icon: BarChart3 },
+          { label: 'Assign Feedback', path: '/teacher/assign-feedback', icon: FileText },
           ...common
         ];
       case 'admin':

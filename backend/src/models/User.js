@@ -34,6 +34,8 @@ const userSchema = new mongoose.Schema(
       ref: 'Department',
     },
     departmentName: { type: String },
+    teacherGuardian: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    classIncharge: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     class: { type: String },
     rollNumber: { type: String },
     dob: { type: Date },

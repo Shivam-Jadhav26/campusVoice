@@ -139,9 +139,13 @@ export const departmentAPI = {
   getTeachers: (deptId) => api.get(`/users/departments/${deptId}/teachers`),
 };
 
-export const settingsAPI = {
-  get: () => api.get('/settings'),
-  update: (data) => api.put('/settings', data),
+
+export const feedbackRequestAPI = {
+  createRequest: (data) => api.post('/feedback-requests', data),
+  getFacultyRequests: () => api.get('/feedback-requests/faculty'),
+  getStudentRequests: () => api.get('/feedback-requests/student'),
+  getRequestById: (id) => api.get(`/feedback-requests/${id}`),
+  submitResponse: (id, responses) => api.put(`/feedback-requests/${id}/submit`, { responses }),
 };
 
 export default api;

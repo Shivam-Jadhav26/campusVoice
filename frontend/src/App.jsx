@@ -17,6 +17,8 @@ import FeedbackPortal from './pages/student/FeedbackPortal';
 import AcademicReview from './pages/student/AcademicReview';
 
 // Teacher
+import AssignedFeedback from './pages/student/AssignedFeedback';
+import AssignFeedback from './pages/teacher/AssignFeedback';
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
 import TeacherComplaints from './pages/teacher/TeacherComplaints';
 
@@ -110,12 +112,14 @@ const App = () => {
             <Route path="/student/complaints/new" element={<ProtectedRoute allowedRoles={['student']}><CreateComplaint /></ProtectedRoute>} />
             <Route path="/student/complaints/:id" element={<ProtectedRoute allowedRoles={['student']}><ComplaintDetail /></ProtectedRoute>} />
             <Route path="/student/feedback" element={<ProtectedRoute allowedRoles={['student']}><FeedbackPortal /></ProtectedRoute>} />
+            <Route path="/student/assigned-feedback" element={<ProtectedRoute allowedRoles={['student']}><AssignedFeedback /></ProtectedRoute>} />
             <Route path="/student/academic-review" element={<ProtectedRoute allowedRoles={['student']}><AcademicReview /></ProtectedRoute>} />
             <Route path="/student/notifications" element={<ProtectedRoute allowedRoles={['student']}><NotificationsPage /></ProtectedRoute>} />
             <Route path="/student/profile" element={<ProtectedRoute allowedRoles={['student']}><ProfilePage /></ProtectedRoute>} />
 
             {/* Teacher Routes */}
             <Route path="/teacher/dashboard" element={<ProtectedRoute allowedRoles={['teacher']}><TeacherDashboard /></ProtectedRoute>} />
+            <Route path="/teacher/assign-feedback" element={<ProtectedRoute allowedRoles={['teacher', 'tg', 'class_incharge', 'hod', 'admin']}><AssignFeedback /></ProtectedRoute>} />
             <Route path="/teacher/complaints" element={<ProtectedRoute allowedRoles={['teacher']}><TeacherComplaints /></ProtectedRoute>} />
             <Route path="/teacher/complaints/:id" element={<ProtectedRoute allowedRoles={['teacher', 'tg', 'class_incharge', 'hod', 'admin']}><ComplaintDetail /></ProtectedRoute>} />
             <Route path="/teacher/notifications" element={<ProtectedRoute allowedRoles={['teacher']}><NotificationsPage /></ProtectedRoute>} />

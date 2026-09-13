@@ -4,11 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { Upload, X, AlertCircle, CheckCircle, Sparkles, Loader2, Info, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { complaintAPI } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 
 export default function CreateComplaint() {
+  const { user } = useAuth();
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
+  const [pendingData, setPendingData] = useState(null);
   const [files, setFiles] = useState([]);
   const [aiSuggestion, setAiSuggestion] = useState(null);
   const [loadingAi, setLoadingAi] = useState(false);
@@ -24,7 +27,8 @@ export default function CreateComplaint() {
       department: 'Computer Engineering',
       priority: 'Medium',
       location: '',
-      isAnonymous: false
+      isAnonymous: false,
+      escalationLevel: '0'
     }
   });
 
@@ -114,79 +118,18 @@ export default function CreateComplaint() {
     }
   };
 
-  const handleNext = async () => {
-    if (step === 1) {
-      const currentTitle = (getValues('title') || title || '').trim();
-      const currentDesc = (getValues('description') || description || '').trim();
 
-      if (!currentTitle) {
-        toast.error('Please enter a complaint title');
-        return;
-      }
-      if (!currentDesc) {
-        toast.error('Please enter a detailed description');
-        return;
-      }
-      if (currentDesc.length < 20) {
-        toast.error(`Please provide more details (${currentDesc.length}/20 chars min)`);
-        return;
-      }
-      
-      // Check for duplicates
-      try {
-        setCheckingDuplicates(true);
-        const res = await complaintAPI.checkDuplicates({ title: currentTitle, description: currentDesc });
-        const foundDupes = res.data?.data?.duplicates || res.data?.duplicates || [];
-        if (foundDupes.length > 0) {
-          setDuplicates(foundDupes);
-          setShowDuplicateModal(true);
-        } else {
-          setStep(2);
-        }
-      } catch (err) {
-        // Proceed anyway if duplicate check fails
-        setStep(2);
-      } finally {
-        setCheckingDuplicates(false);
-      }
-    } else if (step === 2) {
-      const currentCat = getValues('category') || watch('category');
-      const currentPri = getValues('priority') || watch('priority');
-
-      if (!currentCat) {
-        toast.error('Please select a category');
-        return;
-      }
-      if (!currentPri) {
-        toast.error('Please select a priority');
-        return;
-      }
-      setStep(3);
-    }
-  };
-
-  const onFormError = (formErrors) => {
-    if (formErrors.title || formErrors.description) {
-      setStep(1);
-      toast.error(formErrors.title?.message || formErrors.description?.message || 'Please check title and description in Step 1');
-    } else if (formErrors.category || formErrors.priority) {
-      setStep(2);
-      toast.error('Please select category and priority in Step 2');
-    } else {
-      toast.error('Please review the form fields');
-    }
-  };
-
-  const onSubmit = async (data) => {
+  const submitComplaint = async (data) => {
     try {
       const formData = new FormData();
       formData.append('title', (data.title || '').trim());
       formData.append('description', (data.description || '').trim());
       formData.append('category', data.category || 'Academic');
-      formData.append('department', data.department || 'Computer Engineering');
+      formData.append('department', user?.departmentName || 'Information Technology');
       formData.append('priority', data.priority || 'Medium');
       if (data.location) formData.append('location', data.location.trim());
       if (data.isAnonymous) formData.append('isAnonymous', 'true');
+      formData.append('escalationLevel', data.escalationLevel || '0');
       
       files.forEach(file => formData.append('attachments', file));
       
@@ -207,6 +150,31 @@ export default function CreateComplaint() {
     }
   };
 
+  const onSubmit = async (data) => {
+    if (!pendingData || pendingData.title !== data.title || pendingData.description !== data.description) {
+      try {
+        setCheckingDuplicates(true);
+        const res = await complaintAPI.checkDuplicates({ title: data.title, description: data.description });
+        const foundDupes = res.data?.data?.duplicates || res.data?.duplicates || [];
+        if (foundDupes.length > 0) {
+          setDuplicates(foundDupes);
+          setPendingData(data);
+          setShowDuplicateModal(true);
+          return;
+        }
+      } catch (err) {
+        // proceed
+      } finally {
+        setCheckingDuplicates(false);
+      }
+    }
+    setPendingData(data);
+    setShowPreviewModal(true);
+  };
+
+  const onFormError = (formErrors) => {
+    toast.error('Please check all required fields');
+  };
   return (
     <DashboardLayout>
       <div className="max-w-4xl mx-auto space-y-6">
@@ -215,30 +183,11 @@ export default function CreateComplaint() {
         <p className="text-gray-600">Please provide detailed information to help us resolve the issue quickly.</p>
       </div>
 
-      {/* Progress Bar */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between relative">
-          <div className="absolute left-0 top-1/2 w-full h-1 bg-gray-200 -z-10 -translate-y-1/2"></div>
-          <div className="absolute left-0 top-1/2 h-1 bg-indigo-600 -z-10 -translate-y-1/2 transition-all duration-300" style={{ width: `${((step - 1) / 2) * 100}%` }}></div>
-          
-          {[1, 2, 3].map((num) => (
-            <div key={num} className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${step >= num ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-500'}`}>
-              {num}
-            </div>
-          ))}
-        </div>
-        <div className="flex justify-between text-xs text-gray-500 mt-2 font-medium">
-          <span>Basic Info</span>
-          <span>Categorization</span>
-          <span>Attachments</span>
-        </div>
-      </div>
-
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <form onSubmit={handleSubmit(onSubmit, onFormError)}>
           
           {/* Step 1: Basic Info */}
-          <div className={`p-8 space-y-6 ${step === 1 ? 'block' : 'hidden'}`}>
+          <div className="p-8 space-y-6">
             <div>
               <div className="flex justify-between items-end mb-1">
                 <label className="block text-sm font-medium text-gray-700">Complaint Title *</label>
@@ -290,7 +239,7 @@ export default function CreateComplaint() {
           </div>
 
           {/* Step 2: Categorization */}
-          <div className={`p-8 space-y-6 ${step === 2 ? 'block' : 'hidden'}`}>
+          <div className="p-8 space-y-6 border-t border-gray-200">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
@@ -308,17 +257,6 @@ export default function CreateComplaint() {
                 </select>
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                <select {...register('department')} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
-                  <option value="Computer Engineering">Computer Engineering</option>
-                  <option value="Information Technology">Information Technology</option>
-                  <option value="Electronics & Telecom">Electronics & Telecom</option>
-                  <option value="Mechanical Engineering">Mechanical Engineering</option>
-                  <option value="Civil Engineering">Civil Engineering</option>
-                </select>
-              </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Priority Level *</label>
                 <div className="flex flex-wrap gap-3">
@@ -347,11 +285,22 @@ export default function CreateComplaint() {
                   placeholder="e.g. Lab 3, Block A, Room 402"
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Escalation Level</label>
+                <select {...register('escalationLevel')} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                  <option value="0">Level 0: Teacher</option>
+                  <option value="1">Level 1: Tutor Guardian (TG)</option>
+                  <option value="2">Level 2: Class Incharge</option>
+                  <option value="3">Level 3: Head of Department (HOD)</option>
+                </select>
+                <p className="text-xs text-gray-500 mt-1">Select the starting level for this complaint.</p>
+              </div>
             </div>
           </div>
 
           {/* Step 3: Attachments & Submit */}
-          <div className={`p-8 space-y-6 ${step === 3 ? 'block' : 'hidden'}`}>
+          <div className="p-8 space-y-6 border-t border-gray-200">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Attachments (Max 5 files, Optional)</label>
               <div 
@@ -410,37 +359,126 @@ export default function CreateComplaint() {
             </div>
           </div>
 
+          
           {/* Form Actions */}
-          <div className="px-8 py-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
-            {step > 1 ? (
-              <button type="button" onClick={() => setStep(step - 1)} className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium">
-                Back
-              </button>
-            ) : <div></div>}
-            
-            {step < 3 ? (
-              <button 
-                type="button" 
-                onClick={handleNext}
-                disabled={checkingDuplicates}
-                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium flex items-center"
-              >
-                {checkingDuplicates && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                Next Step
-              </button>
-            ) : (
-              <button 
-                type="submit"
-                disabled={isSubmitting}
-                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium flex items-center shadow-sm"
-              >
-                {isSubmitting ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <CheckCircle className="w-5 h-5 mr-2" />}
-                Submit Complaint
-              </button>
-            )}
+          <div className="px-8 py-4 border-t border-gray-200 bg-gray-50 flex justify-end items-center">
+            <button 
+              type="submit"
+              disabled={isSubmitting || checkingDuplicates}
+              className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium flex items-center shadow-sm"
+            >
+              {(isSubmitting || checkingDuplicates) ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <CheckCircle className="w-5 h-5 mr-2" />}
+              Preview & Submit
+            </button>
           </div>
         </form>
       </div>
+
+
+      {/* Preview Modal */}
+      {showPreviewModal && pendingData && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="p-6 border-b border-gray-200 flex justify-between items-center bg-indigo-50">
+              <div className="flex items-center gap-3 text-indigo-800">
+                <CheckCircle className="w-6 h-6" />
+                <h3 className="text-lg font-bold">Preview Complaint</h3>
+              </div>
+              <button onClick={() => setShowPreviewModal(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto space-y-6">
+              {/* Raiser Info */}
+              <div>
+                <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Complainant Details</h4>
+                <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                  <div>
+                    <span className="text-xs text-gray-500 block">Name</span>
+                    <span className="font-medium">{pendingData.isAnonymous ? 'Anonymous Student' : user?.name}</span>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500 block">Roll Number</span>
+                    <span className="font-medium">{pendingData.isAnonymous ? 'Hidden' : (user?.rollNumber || 'N/A')}</span>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500 block">Class</span>
+                    <span className="font-medium">{pendingData.isAnonymous ? 'Hidden' : (user?.class || 'N/A')}</span>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500 block">Department</span>
+                    <span className="font-medium">{user?.departmentName || pendingData.department}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Complaint Details */}
+              <div>
+                <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Complaint Details</h4>
+                <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+                  <div>
+                    <span className="text-xs text-gray-500 block">Title</span>
+                    <span className="font-medium text-gray-900">{pendingData.title}</span>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-500 block">Description</span>
+                    <span className="text-gray-700 whitespace-pre-wrap">{pendingData.description}</span>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-xs text-gray-500 block">Category</span>
+                      <span className="font-medium text-gray-900">{pendingData.category}</span>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-500 block">Priority</span>
+                      <span className="font-medium text-gray-900">{pendingData.priority}</span>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-500 block">Escalation Level</span>
+                      <span className="font-medium text-gray-900">Level {pendingData.escalationLevel}</span>
+                    </div>
+                    <div>
+                      <span className="text-xs text-gray-500 block">Location</span>
+                      <span className="font-medium text-gray-900">{pendingData.location || 'N/A'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Attachments */}
+              {files.length > 0 && (
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Attachments ({files.length})</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {files.map((file, idx) => (
+                      <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 rounded border border-gray-200">
+                        <FileText className="w-4 h-4 text-indigo-500 shrink-0" />
+                        <span className="text-sm text-gray-700 truncate">{file.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="p-6 border-t border-gray-200 bg-gray-50 flex justify-end gap-3">
+              <button onClick={() => setShowPreviewModal(false)} className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 font-medium text-gray-700">
+                Edit Details
+              </button>
+              <button 
+                onClick={() => { setShowPreviewModal(false); submitComplaint(pendingData); }}
+                disabled={isSubmitting}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium flex items-center"
+              >
+                {isSubmitting ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <CheckCircle className="w-5 h-5 mr-2" />}
+                Confirm & Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Duplicate Check Modal */}
       {showDuplicateModal && (
@@ -478,7 +516,7 @@ export default function CreateComplaint() {
               <button onClick={() => setShowDuplicateModal(false)} className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 font-medium text-gray-700">
                 Cancel
               </button>
-              <button onClick={() => { setShowDuplicateModal(false); setStep(2); }} className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">
+              <button onClick={() => { setShowDuplicateModal(false); setShowPreviewModal(true); }} className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium">
                 Yes, mine is different. Continue
               </button>
             </div>
