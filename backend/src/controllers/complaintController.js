@@ -8,7 +8,7 @@ const { createAuditLog } = require('./auditLogController');
 
 exports.createComplaint = async (req, res, next) => {
   try {
-    const { title, description, category, department, priority, location, isAnonymous } = req.body;
+    const { title, description, category, department, priority, location, isAnonymous, escalationLevel } = req.body;
     
     const attachments = (req.files || []).map(file => ({
       filename: file.originalname,
@@ -41,7 +41,7 @@ exports.createComplaint = async (req, res, next) => {
     
     // Assign handler
     try {
-      await complaintService.assignInitialHandler(complaint, req.user.department);
+      await complaintService.assignInitialHandler(complaint, req.user.department, escalationLevel || 0);
     } catch (err) {
       console.warn('Initial handler assignment warning:', err.message);
     }

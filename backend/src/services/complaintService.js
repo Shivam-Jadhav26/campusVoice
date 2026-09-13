@@ -5,38 +5,42 @@ const mongoose = require('mongoose');
 const { notifyComplaintAssigned } = require('./notificationService');
 const { DEFAULT_ESCALATION_HOURS } = require('../utils/constants');
 
-const assignInitialHandler = async (complaint, department) => {
+const assignInitialHandler = async (complaint, department, escalationLevel = 0) => {
   let deptId = department;
   if (typeof department === 'string' && !mongoose.Types.ObjectId.isValid(department)) {
     const deptDoc = await Department.findOne({ name: { $regex: new RegExp(`^${department}$`, 'i') } });
     if (deptDoc) deptId = deptDoc._id;
   }
 
+  const roleMap = {
+    0: 'teacher',
+    1: 'tg',
+    2: 'class_incharge',
+    3: 'hod'
+  };
+
+  let targetRole = roleMap[escalationLevel] || 'teacher';
   let handler = null;
+  
   if (mongoose.Types.ObjectId.isValid(deptId)) {
-    handler = await User.findOne({ role: 'teacher', department: deptId });
-    if (!handler) {
-      handler = await User.findOne({ role: 'hod', department: deptId });
-    }
+    handler = await User.findOne({ role: targetRole, department: deptId });
   }
 
+  // Fallbacks if handler not found in department
   if (!handler) {
-    handler = await User.findOne({ role: 'teacher' });
+    handler = await User.findOne({ role: targetRole });
   }
-
-  if (!handler) {
-    handler = await User.findOne({ role: 'hod' });
-  }
-
-  if (!handler) {
-    handler = await User.findOne({ role: 'admin' });
-  }
+  
+  if (!handler && targetRole !== 'teacher') handler = await User.findOne({ role: 'teacher' });
+  if (!handler) handler = await User.findOne({ role: 'hod' });
+  if (!handler) handler = await User.findOne({ role: 'admin' });
 
   if (!handler) {
     throw new Error('No appropriate handler found');
   }
 
-  complaint.currentHandler = handler.role === 'teacher' ? 'Teacher' : 'HOD';
+  complaint.escalationLevel = Number(escalationLevel);
+  complaint.currentHandler = handler.role === 'teacher' ? 'Teacher' : (handler.role === 'tg' ? 'TG' : (handler.role === 'class_incharge' ? 'Class Incharge' : 'HOD'));
   complaint.currentHandlerId = handler._id;
   complaint.currentHandlerName = handler.name;
   

@@ -11,6 +11,16 @@ export default function ProfilePage() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
 
+  const [tgList, setTgList] = useState([]);
+  const [classInchargeList, setClassInchargeList] = useState([]);
+  
+  React.useEffect(() => {
+    if (user?.role === 'student') {
+      userAPI.getAll({ role: 'tg', limit: 100 }).then(res => setTgList(res.data.data.users || res.data.data || []));
+      userAPI.getAll({ role: 'class_incharge', limit: 100 }).then(res => setClassInchargeList(res.data.data.users || res.data.data || []));
+    }
+  }, [user]);
+
   const [formData, setFormData] = useState({
     name: user?.name || '',
     phone: user?.phone || '+91 98201 10002',
@@ -19,6 +29,8 @@ export default function ProfilePage() {
     dob: user?.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
     currentYear: user?.currentYear || '2nd Year',
     batch: user?.batch || '2023-2027',
+    teacherGuardian: user?.teacherGuardian || '',
+    classIncharge: user?.classIncharge || '',
   });
   
   const [passwordData, setPasswordData] = useState({
@@ -199,6 +211,38 @@ export default function ProfilePage() {
                       className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm" 
                     />
                   </div>
+                  {user?.role === 'student' && (
+                    <>
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Teacher Guardian</label>
+                        <select
+                          disabled={!isEditing}
+                          value={formData.teacherGuardian}
+                          onChange={e => setFormData({...formData, teacherGuardian: e.target.value})}
+                          className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm"
+                        >
+                          <option value="">Select TG</option>
+                          {tgList.map(t => (
+                            <option key={t._id} value={t._id}>{t.name} ({t.departmentName})</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Class Incharge</label>
+                        <select
+                          disabled={!isEditing}
+                          value={formData.classIncharge}
+                          onChange={e => setFormData({...formData, classIncharge: e.target.value})}
+                          className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm"
+                        >
+                          <option value="">Select Class Incharge</option>
+                          {classInchargeList.map(c => (
+                            <option key={c._id} value={c._id}>{c.name} ({c.departmentName})</option>
+                          ))}
+                        </select>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {isEditing && (

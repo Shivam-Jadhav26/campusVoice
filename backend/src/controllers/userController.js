@@ -10,7 +10,12 @@ exports.getUsers = async (req, res, next) => {
     const { page = 1, limit = 10, search, role, department } = req.query;
     
     const query = {};
-    if (search) query.name = { $regex: search, $options: 'i' };
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { rollNumber: { $regex: search, $options: 'i' } }
+      ];
+    }
     if (role) query.role = role;
     if (department) query.department = department;
     
@@ -115,11 +120,13 @@ exports.deleteUser = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
   try {
-    const { name, phone, class: userClass, rollNumber, dob, currentYear, batch } = req.body;
+    const { name, phone, class: userClass, rollNumber, dob, currentYear, batch, teacherGuardian, classIncharge } = req.body;
     
-    const user = await User.findByIdAndUpdate(req.user.id, { 
-      name, phone, class: userClass, rollNumber, dob, currentYear, batch 
-    }, { new: true });
+    const updateData = { name, phone, class: userClass, rollNumber, dob, currentYear, batch };
+    if (teacherGuardian) updateData.teacherGuardian = teacherGuardian;
+    if (classIncharge) updateData.classIncharge = classIncharge;
+    
+    const user = await User.findByIdAndUpdate(req.user.id, updateData, { new: true });
     
     return sendSuccess(res, { user }, 'Profile updated');
   } catch (error) {
