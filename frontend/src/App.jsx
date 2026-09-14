@@ -13,12 +13,12 @@ import StudentDashboard from './pages/student/StudentDashboard';
 import StudentComplaints from './pages/student/StudentComplaints';
 import CreateComplaint from './pages/student/CreateComplaint';
 import ComplaintDetail from './pages/student/ComplaintDetail';
-import FeedbackPortal from './pages/student/FeedbackPortal';
 import AcademicReview from './pages/student/AcademicReview';
 
 // Teacher
 import AssignedFeedback from './pages/student/AssignedFeedback';
 import AssignFeedback from './pages/teacher/AssignFeedback';
+import FacultyFeedbackResults from './pages/teacher/FacultyFeedbackResults';
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
 import TeacherComplaints from './pages/teacher/TeacherComplaints';
 
@@ -43,7 +43,6 @@ import SettingsPage from './pages/admin/SettingsPage';
 import AuditLogs from './pages/admin/AuditLogs';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminComplaints from './pages/admin/AdminComplaints';
-import AdminFeedback from './pages/admin/AdminFeedback';
 
 // Shared
 import NotificationsPage from './pages/shared/NotificationsPage';
@@ -111,7 +110,6 @@ const App = () => {
             <Route path="/student/complaints/create" element={<ProtectedRoute allowedRoles={['student']}><CreateComplaint /></ProtectedRoute>} />
             <Route path="/student/complaints/new" element={<ProtectedRoute allowedRoles={['student']}><CreateComplaint /></ProtectedRoute>} />
             <Route path="/student/complaints/:id" element={<ProtectedRoute allowedRoles={['student']}><ComplaintDetail /></ProtectedRoute>} />
-            <Route path="/student/feedback" element={<ProtectedRoute allowedRoles={['student']}><FeedbackPortal /></ProtectedRoute>} />
             <Route path="/student/assigned-feedback" element={<ProtectedRoute allowedRoles={['student']}><AssignedFeedback /></ProtectedRoute>} />
             <Route path="/student/academic-review" element={<ProtectedRoute allowedRoles={['student']}><AcademicReview /></ProtectedRoute>} />
             <Route path="/student/notifications" element={<ProtectedRoute allowedRoles={['student']}><NotificationsPage /></ProtectedRoute>} />
@@ -120,6 +118,7 @@ const App = () => {
             {/* Teacher Routes */}
             <Route path="/teacher/dashboard" element={<ProtectedRoute allowedRoles={['teacher']}><TeacherDashboard /></ProtectedRoute>} />
             <Route path="/teacher/assign-feedback" element={<ProtectedRoute allowedRoles={['teacher', 'tg', 'class_incharge', 'hod', 'admin']}><AssignFeedback /></ProtectedRoute>} />
+            <Route path="/teacher/feedback-results" element={<ProtectedRoute allowedRoles={['teacher', 'tg', 'class_incharge', 'hod', 'admin']}><FacultyFeedbackResults /></ProtectedRoute>} />
             <Route path="/teacher/complaints" element={<ProtectedRoute allowedRoles={['teacher']}><TeacherComplaints /></ProtectedRoute>} />
             <Route path="/teacher/complaints/:id" element={<ProtectedRoute allowedRoles={['teacher', 'tg', 'class_incharge', 'hod', 'admin']}><ComplaintDetail /></ProtectedRoute>} />
             <Route path="/teacher/notifications" element={<ProtectedRoute allowedRoles={['teacher']}><NotificationsPage /></ProtectedRoute>} />
@@ -151,7 +150,6 @@ const App = () => {
             <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/complaints" element={<ProtectedRoute allowedRoles={['admin']}><AdminComplaints /></ProtectedRoute>} />
             <Route path="/admin/complaints/:id" element={<ProtectedRoute allowedRoles={['admin']}><ComplaintDetail /></ProtectedRoute>} />
-            <Route path="/admin/feedback" element={<ProtectedRoute allowedRoles={['admin']}><AdminFeedback /></ProtectedRoute>} />
             <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><UserManagement /></ProtectedRoute>} />
             <Route path="/admin/departments" element={<ProtectedRoute allowedRoles={['admin']}><DepartmentsPage /></ProtectedRoute>} />
             <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={['admin']}><SettingsPage /></ProtectedRoute>} />

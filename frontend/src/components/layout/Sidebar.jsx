@@ -40,7 +40,6 @@ const Sidebar = ({ isOpen, onClose }) => {
           { label: 'Dashboard', path: '/student/dashboard', icon: LayoutDashboard },
           { label: 'My Complaints', path: '/student/complaints', icon: FileText },
           { label: 'Submit Complaint', path: '/student/complaints/create', icon: PlusCircle },
-          { label: 'Feedback', path: '/student/feedback', icon: MessageSquare },
           { label: 'Assigned Feedback', path: '/student/assigned-feedback', icon: FileText },
           { label: 'Academic Review', path: '/student/academic-review', icon: BookOpen },
           ...common
@@ -50,6 +49,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           { label: 'Dashboard', path: '/teacher/dashboard', icon: LayoutDashboard },
           { label: 'Assigned Complaints', path: '/teacher/complaints', icon: FileText },
           { label: 'Assign Feedback', path: '/teacher/assign-feedback', icon: FileText },
+          { label: 'Feedback Results', path: '/teacher/feedback-results', icon: BookOpen },
           ...common
         ];
       case 'tg':
@@ -57,6 +57,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           { label: 'Dashboard', path: '/tg/dashboard', icon: LayoutDashboard },
           { label: 'Complaints', path: '/tg/complaints', icon: FileText },
           { label: 'Assign Feedback', path: '/teacher/assign-feedback', icon: FileText },
+          { label: 'Feedback Results', path: '/teacher/feedback-results', icon: BookOpen },
           ...common
         ];
       case 'class_incharge':
@@ -64,6 +65,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           { label: 'Dashboard', path: '/class-incharge/dashboard', icon: LayoutDashboard },
           { label: 'Complaints', path: '/class-incharge/complaints', icon: FileText },
           { label: 'Assign Feedback', path: '/teacher/assign-feedback', icon: FileText },
+          { label: 'Feedback Results', path: '/teacher/feedback-results', icon: BookOpen },
           ...common
         ];
       case 'hod':
@@ -72,13 +74,13 @@ const Sidebar = ({ isOpen, onClose }) => {
           { label: 'Complaints', path: '/hod/complaints', icon: FileText },
           { label: 'Analytics', path: '/hod/analytics', icon: BarChart3 },
           { label: 'Assign Feedback', path: '/teacher/assign-feedback', icon: FileText },
+          { label: 'Feedback Results', path: '/teacher/feedback-results', icon: BookOpen },
           ...common
         ];
       case 'admin':
         return [
           { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
           { label: 'Complaints', path: '/admin/complaints', icon: FileText },
-          { label: 'Feedback', path: '/admin/feedback', icon: MessageSquare },
           { label: 'Users', path: '/admin/users', icon: Users },
           { label: 'Departments', path: '/admin/departments', icon: Building2 },
           { label: 'Analytics', path: '/admin/analytics', icon: BarChart3 },

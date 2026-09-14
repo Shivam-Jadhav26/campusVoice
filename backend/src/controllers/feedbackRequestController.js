@@ -4,25 +4,35 @@ const { sendSuccess, sendError } = require('../utils/responseHelpers');
 
 exports.createRequest = async (req, res, next) => {
   try {
-    const { title, description, studentId, fields } = req.body;
-    
-    // Validate student exists
-    const student = await User.findById(studentId);
-    if (!student || student.role !== 'student') {
-      return sendError(res, 'Invalid student ID or not a student', 400);
-    }
+    const { title, description, studentId, studentIds, fields } = req.body;
     
     if (!fields || !Array.isArray(fields) || fields.length === 0) {
       return sendError(res, 'Fields are required to create a dynamic feedback form', 400);
     }
+    
+    let targetStudents = [];
+    if (studentIds && Array.isArray(studentIds) && studentIds.length > 0) {
+      targetStudents = studentIds;
+    } else if (studentId) {
+      targetStudents = [studentId];
+    } else {
+      return sendError(res, 'At least one student must be assigned', 400);
+    }
 
-    const request = await FeedbackRequest.create({
-      title,
-      description,
-      facultyId: req.user.id || req.user._id,
-      studentId,
-      fields
-    });
+    const requests = [];
+    for (const sid of targetStudents) {
+      const student = await User.findById(sid);
+      if (student && student.role === 'student') {
+        const reqDoc = await FeedbackRequest.create({
+          title,
+          description,
+          facultyId: req.user.id || req.user._id,
+          studentId: sid,
+          fields
+        });
+        requests.push(reqDoc);
+      }
+    }
     
     return sendSuccess(res, { request }, 'Feedback request assigned to student successfully', 201);
   } catch (error) {

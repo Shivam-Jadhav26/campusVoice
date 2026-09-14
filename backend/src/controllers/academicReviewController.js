@@ -7,7 +7,7 @@ const { createAuditLog } = require('./auditLogController');
 
 exports.createAcademicReview = async (req, res, next) => {
   try {
-    const { subjectId, description, type } = req.body;
+    const { subjectName, subjectCode, examType, semester, originalMarks, maxMarks, reason, assignedFaculty } = req.body;
     
     const attachments = (req.files || []).map(file => ({
       filename: file.originalname,
@@ -15,30 +15,37 @@ exports.createAcademicReview = async (req, res, next) => {
       size: file.size
     }));
     
-    const subject = await Subject.findById(subjectId);
-    if (!subject) return sendError(res, 'Subject not found', 404);
-    
-    const teacher = await User.findOne({ _id: subject.teacherId }); 
+    let teacher = null;
+    if (assignedFaculty) {
+      teacher = await User.findById(assignedFaculty);
+    }
     
     const review = await AcademicReview.create({
+      requestId: 'AR-' + Math.floor(100000 + Math.random() * 900000),
       student: req.user.id,
-      subject: subjectId,
-      description,
-      type,
-      assignedTeacher: teacher ? teacher._id : null,
-      status: 'Pending',
+      studentName: req.user.name,
+      studentRoll: req.user.rollNumber,
+      studentClass: req.user.class,
+      department: req.user.departmentName,
+      subjectName: subjectName || 'Unknown',
+      subjectCode,
+      examType: examType || 'Mid-Term',
+      semester: parseInt(semester) || 1,
+      originalMarks: Number(originalMarks) || 0,
+      maxMarks: Number(maxMarks) || 100,
+      reason: reason || '',
+      assignedFaculty: teacher ? teacher._id : null,
+      assignedFacultyName: teacher ? teacher.name : null,
+      status: teacher ? 'Under Faculty Review' : 'Pending',
       attachments,
-      timeline: [{ action: 'Request Submitted', actor: req.user.id, date: new Date() }]
+      timeline: [{ action: 'Request Submitted', description: 'Student requested re-evaluation', performedBy: req.user.id, performedByName: req.user.name, performedByRole: 'student' }]
     });
     
     if (teacher) {
-      review.status = 'Under Faculty Review';
-      await review.save();
-      
       await Notification.create({
         recipient: teacher._id,
         title: 'New Academic Review Request',
-        message: 'A student has submitted an academic review request.',
+        message: `${req.user.name} has requested a re-evaluation for ${subjectName}`,
         relatedEntity: review._id,
         entityModel: 'AcademicReview'
       });

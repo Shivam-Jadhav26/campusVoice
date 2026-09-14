@@ -63,7 +63,7 @@ export default function AssignFeedback() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) return toast.error('Title is required');
-    if (!selectedStudent) return toast.error('Please select a student');
+    if (!departmentFilter && !yearFilter && !classFilter) return toast.error('Please select at least one filter to assign students');
     
     // Validate fields
     for (let f of fields) {
@@ -72,14 +72,31 @@ export default function AssignFeedback() {
 
     try {
       setIsSubmitting(true);
+      
+      const query = { role: 'student', limit: 500 };
+      if (departmentFilter) query.department = departmentFilter;
+      if (yearFilter) query.currentYear = yearFilter;
+      if (classFilter) query.userClass = classFilter;
+      
+      const res = await userAPI.getAll(query);
+      const fetchedStudents = res.data.data.users || res.data.data || [];
+      
+      if (fetchedStudents.length === 0) {
+        toast.error('No students found matching these filters');
+        setIsSubmitting(false);
+        return;
+      }
+      
+      const studentIds = fetchedStudents.map(s => s._id);
+
       await feedbackRequestAPI.createRequest({
         title,
         description,
-        studentId: selectedStudent._id,
+        studentIds,
         fields
       });
-      toast.success('Feedback request assigned successfully!');
-      navigate('/teacher/dashboard'); // redirect to dashboard or wherever appropriate
+      toast.success(`Feedback request assigned to ${fetchedStudents.length} students successfully!`);
+      navigate('/teacher/dashboard');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to assign feedback request');
     } finally {
@@ -128,9 +145,8 @@ export default function AssignFeedback() {
             <div className="space-y-4 border-t border-gray-200 pt-6">
               <h2 className="text-lg font-semibold text-gray-800">2. Assign to Student *</h2>
               
-              {!selectedStudent ? (
-                <div className="space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <select 
                       value={departmentFilter} 
                       onChange={e => setDepartmentFilter(e.target.value)}
@@ -165,65 +181,9 @@ export default function AssignFeedback() {
                       <option value="BE-A">BE-A</option>
                     </select>
                   </div>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={studentSearch}
-                      onChange={e => setStudentSearch(e.target.value)}
-                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleSearch())}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                      placeholder="Search student by Name or Roll Number"
-                    />
-                    <button 
-                      type="button" 
-                      onClick={handleSearch}
-                      disabled={isSearching}
-                      className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-200 flex items-center"
-                    >
-                      {isSearching ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
-                    </button>
-                  </div>
-                  
-                  {students.length > 0 && (
-                    <div className="mt-4 border border-gray-200 rounded-lg overflow-hidden">
-                      {students.map(s => (
-                        <div key={s._id} className="flex justify-between items-center p-3 border-b border-gray-200 last:border-0 hover:bg-gray-50">
-                          <div>
-                            <p className="font-medium">{s.name}</p>
-                            <p className="text-xs text-gray-500">{s.rollNumber} • {s.class} • {s.departmentName}</p>
-                          </div>
-                          <button 
-                            type="button"
-                            onClick={() => { setSelectedStudent(s); setStudents([]); }}
-                            className="px-3 py-1 text-sm bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 font-medium"
-                          >
-                            Select
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+
                 </div>
-              ) : (
-                <div className="flex items-center justify-between p-4 bg-indigo-50 border border-indigo-100 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-bold">
-                      {selectedStudent.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-indigo-900">{selectedStudent.name}</p>
-                      <p className="text-xs text-indigo-700">{selectedStudent.rollNumber} • {selectedStudent.departmentName}</p>
-                    </div>
-                  </div>
-                  <button 
-                    type="button"
-                    onClick={() => setSelectedStudent(null)}
-                    className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
-                  >
-                    Change
-                  </button>
-                </div>
-              )}
+                <p className="text-xs text-gray-500 mt-2">The feedback form will be assigned to all students matching these filters.</p>
             </div>
 
             {/* Form Builder */}
@@ -291,7 +251,7 @@ export default function AssignFeedback() {
             <div className="border-t border-gray-200 pt-6 flex justify-end">
               <button 
                 type="submit"
-                disabled={isSubmitting || !selectedStudent || fields.length === 0}
+                disabled={isSubmitting || fields.length === 0}
                 className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium flex items-center shadow-sm disabled:opacity-50"
               >
                 {isSubmitting ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <CheckCircle className="w-5 h-5 mr-2" />}

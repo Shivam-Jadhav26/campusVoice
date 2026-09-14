@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { BookOpen, Upload, FileText, CheckCircle, Clock, Sparkles, Loader2, AlertCircle } from 'lucide-react';
-import { academicReviewAPI } from '../../services/api';
+import { academicReviewAPI, userAPI } from '../../services/api';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import toast from 'react-hot-toast';
 
@@ -10,11 +10,14 @@ export default function AcademicReview() {
   const [file, setFile] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loadingList, setLoadingList] = useState(false);
+  const [teachers, setTeachers] = useState([]);
   const { register, handleSubmit, reset, formState: { isSubmitting, errors } } = useForm();
 
   useEffect(() => {
     if (activeTab === 'my-reviews') {
       fetchReviews();
+    } else {
+      userAPI.getAll({ role: 'teacher', limit: 100 }).then(res => setTeachers(res.data.data.users || res.data.data || []));
     }
   }, [activeTab]);
 
@@ -47,6 +50,7 @@ export default function AcademicReview() {
       formData.append('originalMarks', data.originalMarks || data.marks || 0);
       formData.append('maxMarks', data.maxMarks || 40);
       formData.append('reason', data.reason);
+      if (data.assignedFaculty) formData.append('assignedFaculty', data.assignedFaculty);
       if (file) {
         formData.append('attachments', file);
       }
@@ -114,6 +118,19 @@ export default function AcademicReview() {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Evaluator (Teacher) *</label>
+                  <select 
+                    {...register('assignedFaculty', { required: 'Please select a teacher' })}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 transition-all text-sm"
+                  >
+                    <option value="">Select the teacher who evaluated this paper</option>
+                    {teachers.map(t => (
+                      <option key={t._id} value={t._id}>{t.name} ({t.departmentName})</option>
+                    ))}
+                  </select>
+                  {errors.assignedFaculty && <span className="text-red-500 text-xs mt-1 block">{errors.assignedFaculty.message}</span>}
+                </div>
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Subject Name *</label>
                   <input

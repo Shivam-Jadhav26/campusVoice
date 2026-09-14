@@ -29,7 +29,7 @@ router.put('/profile', updateProfile);
 router.post('/departments', authorizeRoles('admin'), createDepartment);
 
 // Admin only — users CRUD
-router.get('/', authorizeRoles('admin'), getUsers);
+router.get('/', authorizeRoles('admin', 'teacher', 'tg', 'class_incharge', 'hod', 'student'), getUsers);
 router.post('/', authorizeRoles('admin'), createUser);
 router.get('/:id', authorizeRoles('admin', 'student', 'teacher', 'tg', 'class_incharge', 'hod'), getUserById);
 router.put('/:id', authorizeRoles('admin'), updateUser);
