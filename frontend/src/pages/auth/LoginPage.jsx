@@ -21,23 +21,6 @@ import {
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 
-const rolePresets = {
-  student: [
-    { role: 'Student 1', name: 'Aarav Patel', email: 'student@demo.com', pass: 'Password@123', meta: 'SE-A • CE2024001' },
-    { role: 'Student 2', name: 'Priya Sharma', email: 'student2@demo.com', pass: 'Password@123', meta: 'TE-B • CE2024045' },
-    { role: 'Student 3', name: 'Rohan Verma', email: 'student3@demo.com', pass: 'Password@123', meta: 'BE-A • IT2024012' }
-  ],
-  faculty: [
-    { role: 'Teacher', name: 'Prof. Rajesh Kulkarni', email: 'teacher@demo.com', pass: 'Password@123', meta: 'Faculty Reviewer' },
-    { role: 'Teacher Guardian', name: 'Prof. Vikram Mehta', email: 'tg@demo.com', pass: 'Password@123', meta: '1st Escalation Tier' },
-    { role: 'Class Incharge', name: 'Prof. Sneha Deshmukh', email: 'classincharge@demo.com', pass: 'Password@123', meta: 'Class SE-A' },
-    { role: 'HOD', name: 'Dr. Anand Joshi', email: 'hod@demo.com', pass: 'Password@123', meta: 'Head of Department' }
-  ],
-  admin: [
-    { role: 'Super Admin', name: 'Rajesh Sharma', email: 'admin@demo.com', pass: 'Password@123', meta: 'Full System Control' }
-  ]
-};
-
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState('student'); // 'student' | 'faculty' | 'admin'
@@ -51,8 +34,8 @@ export default function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      email: 'student@demo.com',
-      password: 'Password@123'
+      email: '',
+      password: ''
     }
   });
 
@@ -87,12 +70,6 @@ export default function LoginPage() {
     } catch (error) {
       toast.error(error.response?.data?.message || 'Invalid email or password. Please try again.');
     }
-  };
-
-  const autofill = (email, pass) => {
-    setValue('email', email, { shouldValidate: true });
-    setValue('password', pass, { shouldValidate: true });
-    toast.success(`Loaded credentials for ${email}`, { duration: 2000, icon: '⚡' });
   };
 
   return (
@@ -200,38 +177,6 @@ export default function LoginPage() {
             </button>
           </div>
 
-          {/* Quick Demo Autofill Bar */}
-          <div className="p-3.5 rounded-xl bg-indigo-50 border border-indigo-100 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-indigo-700 tracking-wider uppercase flex items-center gap-1">
-                <Zap className="w-3.5 h-3.5 text-amber-400" />
-                1-Click Demo Login ({activeTab.toUpperCase()})
-              </span>
-              <span className="text-[10px] text-slate-500">Click to fill</span>
-            </div>
-
-            <div className="flex flex-wrap gap-1.5">
-              {rolePresets[activeTab].map((acc) => (
-                <button
-                  key={acc.email}
-                  type="button"
-                  onClick={() => autofill(acc.email, acc.pass)}
-                  className="px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 text-left transition-all group flex items-center gap-2"
-                >
-                  <div>
-                    <div className="text-xs font-semibold text-slate-700 group-hover:text-indigo-700 leading-tight">
-                      {acc.role}
-                    </div>
-                    <div className="text-[10px] text-slate-500 leading-tight">{acc.name}</div>
-                  </div>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">
-                    Fill
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Login Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             
@@ -274,7 +219,7 @@ export default function LoginPage() {
                 </label>
                 <button
                   type="button"
-                  onClick={() => toast.success('Demo password is Password@123')}
+                  onClick={() => toast.error('Please contact administration to reset your password.')}
                   className="text-xs text-indigo-600 hover:text-indigo-700 transition-colors"
                 >
                   Forgot Password?

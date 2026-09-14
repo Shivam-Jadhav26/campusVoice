@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { FileText, Clock, CheckCircle, Eye, Search, Loader2, Folder, ArrowLeft, Users } from 'lucide-react';
 import { feedbackRequestAPI } from '../../services/api';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import Modal from '../../components/ui/Modal';
-import { Loader2, FileText, CheckCircle, Clock, Search, Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function FacultyFeedbackResults() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  
+  // selectedGroup stores the group of requests for a specific form title
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  
+  // selectedRequest stores the specific student's request for viewing the modal
   const [selectedRequest, setSelectedRequest] = useState(null);
 
   useEffect(() => {
@@ -27,24 +32,63 @@ export default function FacultyFeedbackResults() {
     }
   };
 
-  const filtered = requests.filter(req => 
-    req.title.toLowerCase().includes(search.toLowerCase()) || 
-    req.studentId?.name?.toLowerCase().includes(search.toLowerCase())
-  );
+  // Group requests by title
+  const groupedRequests = requests.reduce((acc, req) => {
+    const key = req.title;
+    if (!acc[key]) {
+      acc[key] = {
+        title: req.title,
+        dateAssigned: req.createdAt,
+        total: 0,
+        completed: 0,
+        requests: []
+      };
+    }
+    acc[key].requests.push(req);
+    acc[key].total += 1;
+    if (req.status === 'Completed') acc[key].completed += 1;
+    return acc;
+  }, {});
+
+  const groups = Object.values(groupedRequests)
+    .sort((a, b) => new Date(b.dateAssigned) - new Date(a.dateAssigned))
+    .filter(g => g.title.toLowerCase().includes(search.toLowerCase()));
+
+  // Filter students if inside a group
+  const groupStudents = selectedGroup?.requests.filter(req => 
+    req.studentId?.name?.toLowerCase().includes(search.toLowerCase()) || 
+    req.studentId?.rollNumber?.toLowerCase().includes(search.toLowerCase())
+  ) || [];
 
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Feedback Results</h1>
-            <p className="text-gray-600">Review the feedback submitted by students for your assigned forms.</p>
+            <div className="flex items-center gap-3 mb-1">
+              {selectedGroup && (
+                <button 
+                  onClick={() => { setSelectedGroup(null); setSearch(''); }}
+                  className="p-1.5 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+              )}
+              <h1 className="text-2xl font-bold text-gray-900">
+                {selectedGroup ? selectedGroup.title : 'Feedback Folders'}
+              </h1>
+            </div>
+            <p className="text-gray-600">
+              {selectedGroup 
+                ? 'Review the individual feedback submitted by students.' 
+                : 'View your assigned feedback forms grouped by title.'}
+            </p>
           </div>
           <div className="relative">
             <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
             <input 
               type="text"
-              placeholder="Search by title or student..."
+              placeholder={selectedGroup ? "Search student..." : "Search form title..."}
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full sm:w-64 focus:ring-2 focus:ring-indigo-500"
@@ -55,64 +99,113 @@ export default function FacultyFeedbackResults() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           {loading ? (
             <div className="p-12 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-indigo-500" /></div>
-          ) : filtered.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">
-              <FileText className="w-12 h-12 mx-auto mb-4 opacity-20" />
-              <p>No feedback requests found.</p>
-            </div>
+          ) : !selectedGroup ? (
+            /* FOLDER VIEW */
+            groups.length === 0 ? (
+              <div className="p-12 text-center text-gray-500">
+                <Folder className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                <p>No feedback forms found.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+                {groups.map(group => (
+                  <div 
+                    key={group.title}
+                    onClick={() => { setSelectedGroup(group); setSearch(''); }}
+                    className="border border-gray-200 rounded-xl p-5 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer bg-white group"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="p-3 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-100 transition-colors">
+                        <Folder className="w-6 h-6" />
+                      </div>
+                      <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">
+                        {new Date(group.dateAssigned).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 mb-1 text-lg line-clamp-1" title={group.title}>
+                      {group.title}
+                    </h3>
+                    <div className="flex items-center gap-4 text-sm text-gray-600 mt-4">
+                      <div className="flex items-center gap-1.5">
+                        <Users className="w-4 h-4 text-gray-400" />
+                        <span>{group.total} Assigned</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        <span>{group.completed} Completed</span>
+                      </div>
+                    </div>
+                    
+                    {/* Progress bar */}
+                    <div className="mt-4 w-full bg-gray-100 rounded-full h-1.5">
+                      <div 
+                        className="bg-indigo-500 h-1.5 rounded-full" 
+                        style={{ width: `${(group.completed / group.total) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-gray-50 border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500">
-                    <th className="p-4 font-semibold">Form Title</th>
-                    <th className="p-4 font-semibold">Student</th>
-                    <th className="p-4 font-semibold">Date Assigned</th>
-                    <th className="p-4 font-semibold">Status</th>
-                    <th className="p-4 font-semibold text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {filtered.map(req => (
-                    <tr key={req._id} className="hover:bg-gray-50 transition-colors">
-                      <td className="p-4">
-                        <p className="font-medium text-gray-900">{req.title}</p>
-                      </td>
-                      <td className="p-4">
-                        <p className="font-medium text-gray-900">{req.studentId?.name}</p>
-                        <p className="text-xs text-gray-500">{req.studentId?.rollNumber} • {req.studentId?.class}</p>
-                      </td>
-                      <td className="p-4 text-sm text-gray-600">
-                        {new Date(req.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="p-4">
-                        {req.status === 'Completed' ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            <CheckCircle className="w-3 h-3 mr-1" /> Completed
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                            <Clock className="w-3 h-3 mr-1" /> Pending
-                          </span>
-                        )}
-                      </td>
-                      <td className="p-4 text-right">
-                        <button
-                          onClick={() => setSelectedRequest(req)}
-                          disabled={req.status !== 'Completed'}
-                          className="px-3 py-1.5 text-sm bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-end ml-auto"
-                        >
-                          <Eye className="w-4 h-4 mr-1.5" /> View Results
-                        </button>
-                      </td>
+            /* STUDENT LIST VIEW */
+            groupStudents.length === 0 ? (
+              <div className="p-12 text-center text-gray-500">
+                <FileText className="w-12 h-12 mx-auto mb-4 opacity-20" />
+                <p>No students found matching your search.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50 border-b border-gray-200 text-xs uppercase tracking-wider text-gray-500">
+                      <th className="p-4 font-semibold">Student</th>
+                      <th className="p-4 font-semibold">Roll No & Class</th>
+                      <th className="p-4 font-semibold">Status</th>
+                      <th className="p-4 font-semibold text-right">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {groupStudents.map(req => (
+                      <tr key={req._id} className="hover:bg-gray-50 transition-colors">
+                        <td className="p-4">
+                          <p className="font-medium text-gray-900">{req.studentId?.name}</p>
+                          <p className="text-xs text-gray-500">{req.studentId?.email}</p>
+                        </td>
+                        <td className="p-4">
+                          <p className="font-medium text-gray-700">{req.studentId?.rollNumber}</p>
+                          <p className="text-xs text-gray-500">{req.studentId?.class}</p>
+                        </td>
+                        <td className="p-4">
+                          {req.status === 'Completed' ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              <CheckCircle className="w-3 h-3 mr-1" /> Completed
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                              <Clock className="w-3 h-3 mr-1" /> Pending
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-4 text-right">
+                          <button
+                            onClick={() => setSelectedRequest(req)}
+                            disabled={req.status !== 'Completed'}
+                            className="px-3 py-1.5 text-sm bg-indigo-50 text-indigo-700 rounded-md hover:bg-indigo-100 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-end ml-auto transition-colors"
+                          >
+                            <Eye className="w-4 h-4 mr-1.5" /> View Results
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )
           )}
         </div>
 
+        {/* MODAL VIEW */}
         <Modal
           isOpen={!!selectedRequest}
           onClose={() => setSelectedRequest(null)}

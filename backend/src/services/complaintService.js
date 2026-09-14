@@ -22,7 +22,17 @@ const assignInitialHandler = async (complaint, department, escalationLevel = 0) 
   let targetRole = roleMap[escalationLevel] || 'teacher';
   let handler = null;
   
-  if (mongoose.Types.ObjectId.isValid(deptId)) {
+  const student = await User.findById(complaint.studentId);
+  
+  if (student) {
+    if (targetRole === 'tg' && student.teacherGuardian) {
+      handler = await User.findById(student.teacherGuardian);
+    } else if (targetRole === 'class_incharge' && student.classIncharge) {
+      handler = await User.findById(student.classIncharge);
+    }
+  }
+  
+  if (!handler && mongoose.Types.ObjectId.isValid(deptId)) {
     handler = await User.findOne({ role: targetRole, department: deptId });
   }
 

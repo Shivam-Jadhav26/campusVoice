@@ -2,10 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Trash2, CheckCircle, Search, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { feedbackRequestAPI, userAPI } from '../../services/api';
+import { feedbackRequestAPI, userAPI, departmentAPI } from '../../services/api';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 
 export default function AssignFeedback() {
+  useEffect(() => {
+    departmentAPI.getAll().then(res => {
+      setDepartments(res.data?.data?.departments || res.data?.departments || res.data || []);
+    }).catch(err => console.error('Failed to load departments', err));
+  }, []);
+
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -13,6 +19,7 @@ export default function AssignFeedback() {
   const [departmentFilter, setDepartmentFilter] = useState('');
   const [yearFilter, setYearFilter] = useState('');
   const [classFilter, setClassFilter] = useState('');
+  const [departments, setDepartments] = useState([]);
   const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
@@ -153,8 +160,9 @@ export default function AssignFeedback() {
                       className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm text-gray-700"
                     >
                       <option value="">All Departments</option>
-                      <option value="Information Technology">Information Technology</option>
-                      <option value="Artificial Intelligence and Machine Learning">AI & ML</option>
+                      {departments.map(d => (
+                        <option key={d._id} value={d.name}>{d.name}</option>
+                      ))}
                     </select>
                     
                     <select 
@@ -175,10 +183,10 @@ export default function AssignFeedback() {
                       className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm text-gray-700"
                     >
                       <option value="">All Sections</option>
-                      <option value="SE-A">SE-A</option>
-                      <option value="SE-B">SE-B</option>
-                      <option value="TE-A">TE-A</option>
-                      <option value="BE-A">BE-A</option>
+                      <option value="A">Section A</option>
+                      <option value="B">Section B</option>
+                      <option value="C">Section C</option>
+                      <option value="D">Section D</option>
                     </select>
                   </div>
 

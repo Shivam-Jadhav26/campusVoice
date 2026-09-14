@@ -5,9 +5,22 @@ const mongoose = require('mongoose');
 const { notifyComplaintEscalated } = require('./notificationService');
 const { ESCALATION_CHAIN, ESCALATION_ROLES, DEFAULT_ESCALATION_HOURS } = require('../utils/constants');
 
-const getNextHandlerForLevel = async (level, department) => {
+const getNextHandlerForLevel = async (level, department, studentId) => {
   const role = ESCALATION_ROLES[level];
   let query = { role };
+
+  // Fetch student's assigned TG/CI if applicable
+  if (studentId && (role === 'tg' || role === 'class_incharge')) {
+    const student = await User.findById(studentId);
+    if (student) {
+      if (role === 'tg' && student.teacherGuardian) {
+        return await User.findById(student.teacherGuardian);
+      }
+      if (role === 'class_incharge' && student.classIncharge) {
+        return await User.findById(student.classIncharge);
+      }
+    }
+  }
 
   if (role !== 'admin' && department) {
     let deptId = department;
@@ -42,7 +55,7 @@ const escalateComplaint = async (complaint) => {
   }
 
   const nextLevel = currentLevel + 1;
-  const nextHandler = await getNextHandlerForLevel(nextLevel, complaint.department);
+  const nextHandler = await getNextHandlerForLevel(nextLevel, complaint.department, complaint.studentId);
   
   if (!nextHandler) {
     console.warn(`No handler found for level ${nextLevel} in department ${complaint.department}`);

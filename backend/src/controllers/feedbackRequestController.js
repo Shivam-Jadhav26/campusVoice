@@ -34,7 +34,7 @@ exports.createRequest = async (req, res, next) => {
       }
     }
     
-    return sendSuccess(res, { request }, 'Feedback request assigned to student successfully', 201);
+    return sendSuccess(res, { requests }, 'Feedback request assigned to student successfully', 201);
   } catch (error) {
     next(error);
   }
