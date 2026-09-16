@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Clock, CheckCircle, Eye, Search, Loader2, Folder, ArrowLeft, Users } from 'lucide-react';
+import { FileText, Clock, CheckCircle, Eye, Search, Loader2, Folder, ArrowLeft, Users, BarChart3, List as ListIcon } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { feedbackRequestAPI } from '../../services/api';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import Modal from '../../components/ui/Modal';
@@ -15,6 +16,9 @@ export default function FacultyFeedbackResults() {
   
   // selectedRequest stores the specific student's request for viewing the modal
   const [selectedRequest, setSelectedRequest] = useState(null);
+
+  // Dashboard vs List view toggle
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   useEffect(() => {
     fetchRequests();
@@ -60,6 +64,94 @@ export default function FacultyFeedbackResults() {
     req.studentId?.rollNumber?.toLowerCase().includes(search.toLowerCase())
   ) || [];
 
+  const renderDashboard = () => {
+    const completedRequests = selectedGroup?.requests.filter(r => r.status === 'Completed') || [];
+    if (completedRequests.length === 0) {
+      return <div className="p-12 text-center text-gray-500">No completed responses yet to generate dashboard.</div>;
+    }
+
+    const fields = completedRequests[0].fields;
+
+    return (
+      <div className="p-6 space-y-8 bg-gray-50/30">
+        {fields.map((field, idx) => {
+          if (field.type === 'rating') {
+            let sum = 0;
+            let count = 0;
+            const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+            
+            completedRequests.forEach(req => {
+              const resp = req.responses.find(r => r.fieldId === field._id);
+              if (resp && resp.value) {
+                const val = Number(resp.value);
+                sum += val;
+                count++;
+                if (distribution[val] !== undefined) distribution[val]++;
+              }
+            });
+            const avg = count > 0 ? (sum / count).toFixed(1) : 0;
+            const chartData = [
+              { name: '5 Stars', count: distribution[5] },
+              { name: '4 Stars', count: distribution[4] },
+              { name: '3 Stars', count: distribution[3] },
+              { name: '2 Stars', count: distribution[2] },
+              { name: '1 Star', count: distribution[1] },
+            ];
+
+            return (
+              <div key={field._id || idx} className="bg-white border border-gray-100 shadow-sm rounded-xl p-6">
+                <h3 className="font-semibold text-lg text-gray-900 mb-6">{idx + 1}. {field.label}</h3>
+                <div className="flex flex-col md:flex-row gap-8 items-center">
+                  <div className="flex-shrink-0 text-center flex flex-col items-center justify-center p-6 bg-indigo-50 rounded-full w-40 h-40">
+                    <span className="text-5xl font-bold text-indigo-600">{avg}</span>
+                    <span className="text-xs text-indigo-400 mt-2 font-medium uppercase tracking-wider">Average</span>
+                  </div>
+                  <div className="flex-grow w-full h-48">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={chartData} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
+                        <XAxis type="number" allowDecimals={false} />
+                        <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} width={60} />
+                        <Tooltip cursor={{fill: '#f3f4f6'}} />
+                        <Bar dataKey="count" fill="#6366f1" radius={[0, 4, 4, 0]} barSize={24} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            );
+          } else {
+            const textResponses = [];
+            completedRequests.forEach(req => {
+              const resp = req.responses.find(r => r.fieldId === field._id);
+              if (resp && resp.value) {
+                textResponses.push({ value: resp.value, student: req.studentId?.name });
+              }
+            });
+            
+            return (
+              <div key={field._id || idx} className="bg-white border border-gray-100 shadow-sm rounded-xl p-6">
+                 <h3 className="font-semibold text-lg text-gray-900 mb-4">{idx + 1}. {field.label}</h3>
+                 {textResponses.length === 0 ? (
+                   <p className="text-gray-500 text-sm italic">No responses yet.</p>
+                 ) : (
+                   <div className="space-y-3 max-h-72 overflow-y-auto pr-2">
+                     {textResponses.map((tr, i) => (
+                       <div key={i} className="bg-gray-50 p-4 rounded-lg border border-gray-100 text-sm">
+                         <p className="text-gray-800 whitespace-pre-wrap">{tr.value}</p>
+                         <p className="text-xs text-gray-400 mt-2 font-medium flex justify-end">- {tr.student}</p>
+                       </div>
+                     ))}
+                   </div>
+                 )}
+              </div>
+            );
+          }
+        })}
+      </div>
+    );
+  };
+
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto space-y-6">
@@ -68,7 +160,7 @@ export default function FacultyFeedbackResults() {
             <div className="flex items-center gap-3 mb-1">
               {selectedGroup && (
                 <button 
-                  onClick={() => { setSelectedGroup(null); setSearch(''); }}
+                  onClick={() => { setSelectedGroup(null); setSearch(''); setActiveTab('dashboard'); }}
                   className="p-1.5 hover:bg-gray-100 rounded-full text-gray-500 transition-colors"
                 >
                   <ArrowLeft className="w-5 h-5" />
@@ -84,15 +176,35 @@ export default function FacultyFeedbackResults() {
                 : 'View your assigned feedback forms grouped by title.'}
             </p>
           </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
-            <input 
-              type="text"
-              placeholder={selectedGroup ? "Search student..." : "Search form title..."}
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full sm:w-64 focus:ring-2 focus:ring-indigo-500"
-            />
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            {selectedGroup && (
+              <div className="flex bg-gray-100 p-1 rounded-lg">
+                <button
+                  onClick={() => setActiveTab('dashboard')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'dashboard' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  <BarChart3 className="w-4 h-4" /> Overall
+                </button>
+                <button
+                  onClick={() => setActiveTab('students')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'students' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  <ListIcon className="w-4 h-4" /> Students
+                </button>
+              </div>
+            )}
+            {(!selectedGroup || activeTab === 'students') && (
+              <div className="relative w-full sm:w-auto">
+                <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
+                <input 
+                  type="text"
+                  placeholder={selectedGroup ? "Search student..." : "Search form title..."}
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full sm:w-64 focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+            )}
           </div>
         </div>
 
@@ -148,8 +260,9 @@ export default function FacultyFeedbackResults() {
               </div>
             )
           ) : (
-            /* STUDENT LIST VIEW */
-            groupStudents.length === 0 ? (
+            /* STUDENT LIST OR DASHBOARD VIEW */
+            activeTab === 'dashboard' ? renderDashboard() : (
+              groupStudents.length === 0 ? (
               <div className="p-12 text-center text-gray-500">
                 <FileText className="w-12 h-12 mx-auto mb-4 opacity-20" />
                 <p>No students found matching your search.</p>
@@ -202,7 +315,7 @@ export default function FacultyFeedbackResults() {
                 </table>
               </div>
             )
-          )}
+          ))}
         </div>
 
         {/* MODAL VIEW */}
