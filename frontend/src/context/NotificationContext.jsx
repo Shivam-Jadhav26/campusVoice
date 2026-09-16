@@ -14,7 +14,7 @@ export const NotificationProvider = ({ children }) => {
   useEffect(() => {
     let newSocket;
     if (isAuthenticated && user) {
-      newSocket = io('http://localhost:5000');
+      newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
       setSocket(newSocket);
 
       newSocket.on('connect', () => {
