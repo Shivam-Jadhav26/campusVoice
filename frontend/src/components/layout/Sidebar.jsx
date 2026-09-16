@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import toast from 'react-hot-toast';
 import { formatRole } from '../../utils/helpers';
 import { 
   Shield, 
@@ -18,7 +19,8 @@ import {
   Settings,
   LogOut,
   X,
-  UserCheck
+  UserCheck,
+  Upload
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -80,6 +82,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           { label: 'Audit Logs', path: '/admin/audit-logs', icon: ShieldAlert },
           { label: 'Settings', path: '/admin/settings', icon: Settings },
           { label: 'Notifications', path: '/admin/notifications', icon: Bell },
+          { label: 'Upload Data', path: '/admin/upload-data', icon: Upload },
         ];
       default:
         return [];
@@ -129,11 +132,11 @@ const Sidebar = ({ isOpen, onClose }) => {
             const Icon = item.icon;
             return (
               <NavLink
-                key={item.path}
+                key={item.label}
                 to={item.path}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition-colors ${
-                    isActive 
+                    isActive && !item.isDummy
                       ? 'bg-primary-50 text-primary-700' 
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`

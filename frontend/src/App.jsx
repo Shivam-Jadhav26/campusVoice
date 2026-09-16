@@ -42,6 +42,7 @@ import SettingsPage from './pages/admin/SettingsPage';
 import AuditLogs from './pages/admin/AuditLogs';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminComplaints from './pages/admin/AdminComplaints';
+import UploadDataPage from './pages/admin/UploadDataPage';
 
 // Shared
 import NotificationsPage from './pages/shared/NotificationsPage';
@@ -148,6 +149,7 @@ const App = () => {
             <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={['admin']}><SettingsPage /></ProtectedRoute>} />
             <Route path="/admin/audit-logs" element={<ProtectedRoute allowedRoles={['admin']}><AuditLogs /></ProtectedRoute>} />
             <Route path="/admin/analytics" element={<ProtectedRoute allowedRoles={['admin']}><AdminAnalytics /></ProtectedRoute>} />
+            <Route path="/admin/upload-data" element={<ProtectedRoute allowedRoles={['admin']}><UploadDataPage /></ProtectedRoute>} />
             <Route path="/admin/notifications" element={<ProtectedRoute allowedRoles={['admin']}><NotificationsPage /></ProtectedRoute>} />
             <Route path="/admin/profile" element={<ProtectedRoute allowedRoles={['admin']}><ProfilePage /></ProtectedRoute>} />
 
