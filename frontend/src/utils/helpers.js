@@ -89,7 +89,7 @@ export const formatFileSize = (bytes) => {
 export const getRoleDashboardPath = (role) => {
   const paths = { 
     student: '/student/dashboard', 
-    teacher: '/teacher/dashboard', 
+
     tg: '/tg/dashboard', 
     class_incharge: '/class-incharge/dashboard', 
     hod: '/hod/dashboard', 

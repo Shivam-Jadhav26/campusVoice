@@ -36,11 +36,11 @@ router.post('/:id/reopen', authorizeRoles('student'), reopenComplaint);
 router.post('/:id/follow', authorizeRoles('student'), followComplaint);
 
 // Officer & Student routes
-router.post('/:id/reply', authorizeRoles('student', 'teacher', 'tg', 'class_incharge', 'hod', 'admin'), replyToComplaint);
-router.post('/:id/replies', authorizeRoles('student', 'teacher', 'tg', 'class_incharge', 'hod', 'admin'), replyToComplaint);
-router.put('/:id/status', authorizeRoles('teacher', 'tg', 'class_incharge', 'hod', 'admin'), updateComplaintStatus);
-router.post('/:id/resolve', authorizeRoles('teacher', 'tg', 'class_incharge', 'hod', 'admin'), resolveComplaint);
-router.post('/:id/reject', authorizeRoles('teacher', 'tg', 'class_incharge', 'hod', 'admin'), rejectComplaint);
-router.post('/:id/escalate', authorizeRoles('teacher', 'tg', 'class_incharge', 'hod', 'admin'), escalateComplaint);
+router.post('/:id/reply', authorizeRoles('student', 'tg', 'class_incharge', 'hod', 'admin'), replyToComplaint);
+router.post('/:id/replies', authorizeRoles('student', 'tg', 'class_incharge', 'hod', 'admin'), replyToComplaint);
+router.put('/:id/status', authorizeRoles('tg', 'class_incharge', 'hod', 'admin'), updateComplaintStatus);
+router.post('/:id/resolve', authorizeRoles('tg', 'class_incharge', 'hod', 'admin'), resolveComplaint);
+router.post('/:id/reject', authorizeRoles('tg', 'class_incharge', 'hod', 'admin'), rejectComplaint);
+router.post('/:id/escalate', authorizeRoles('tg', 'class_incharge', 'hod', 'admin'), escalateComplaint);
 
 module.exports = router;

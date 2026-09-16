@@ -12,7 +12,7 @@ const generateTokens = (user) => {
 
 exports.register = async (req, res, next) => {
   try {
-    const { name, email, password, rollNumber, dob, currentYear, departmentName, batch } = req.body;
+    const { name, email, password, rollNumber, currentYear, departmentName, batch } = req.body;
     
     if (!name || !email || !password) {
       return sendError(res, 'Please provide name, email, and password', 400);
@@ -29,7 +29,7 @@ exports.register = async (req, res, next) => {
       password,
       role: 'student', // Registration is only for students right now
       rollNumber,
-      dob,
+
       currentYear,
       departmentName,
       batch

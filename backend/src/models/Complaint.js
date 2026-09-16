@@ -36,13 +36,13 @@ const complaintSchema = new mongoose.Schema(
     studentClass: { type: String },
 
     // Handler
-    currentHandler: { type: String, default: 'Teacher' }, // role label
+    currentHandler: { type: String, default: 'TG' }, // role label
     currentHandlerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
     currentHandlerName: { type: String },
 
     // Status
     status: { type: String, enum: STATUSES, default: 'Pending', index: true },
-    escalationLevel: { type: Number, default: 0, min: 0, max: 3 }, // 0=Teacher..3=HOD
+    escalationLevel: { type: Number, default: 0, min: 0, max: 2 }, // 0=TG..2=HOD
 
     // Deadlines
     deadline: { type: Date, index: true },

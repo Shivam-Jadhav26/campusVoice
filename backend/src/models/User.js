@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['student', 'teacher', 'tg', 'class_incharge', 'hod', 'admin'],
+      enum: ['student', 'tg', 'class_incharge', 'hod', 'admin'],
       default: 'student',
     },
     department: {
@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema(
     classIncharge: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     class: { type: String },
     rollNumber: { type: String },
-    dob: { type: Date },
+
     currentYear: { type: String }, // e.g., '1st Year', '2nd Year', '3rd Year', '4th Year'
     batch: { type: String }, // e.g., '2023-2027'
     phone: { type: String },

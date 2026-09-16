@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 
 const ROLES = [
   { value: 'student', label: 'Student' },
-  { value: 'teacher', label: 'Teacher' },
+
   { value: 'tg', label: 'Tutor Guardian' },
   { value: 'class_incharge', label: 'Class Incharge' },
   { value: 'hod', label: 'HOD' },
@@ -261,8 +261,7 @@ function ConfirmDialog({ isOpen, onClose, onConfirm, user, saving }) {
 
 const roleBadgeColors = {
   student: 'bg-blue-50 text-blue-700 border-blue-200',
-  teacher: 'bg-purple-50 text-purple-700 border-purple-200',
-  tg: 'bg-amber-50 text-amber-700 border-amber-200',
+  tg: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   class_incharge: 'bg-cyan-50 text-cyan-700 border-cyan-200',
   hod: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   admin: 'bg-red-50 text-red-700 border-red-200',
@@ -270,8 +269,7 @@ const roleBadgeColors = {
 
 const roleLabels = {
   student: 'Student',
-  teacher: 'Teacher',
-  tg: 'TG',
+  tg: 'Tutor Guardian',
   class_incharge: 'Class Incharge',
   hod: 'HOD',
   admin: 'Admin',

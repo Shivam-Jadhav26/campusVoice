@@ -122,9 +122,9 @@ exports.deleteUser = async (req, res, next) => {
 
 exports.updateProfile = async (req, res, next) => {
   try {
-    const { name, phone, class: userClass, rollNumber, dob, currentYear, batch, teacherGuardian, classIncharge } = req.body;
+    const { name, phone, class: userClass, rollNumber, currentYear, batch, teacherGuardian, classIncharge } = req.body;
     
-    const updateData = { name, phone, class: userClass, rollNumber, dob, currentYear, batch };
+    const updateData = { name, phone, class: userClass, rollNumber, currentYear, batch };
     if (teacherGuardian) updateData.teacherGuardian = teacherGuardian;
     if (classIncharge) updateData.classIncharge = classIncharge;
     

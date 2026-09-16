@@ -8,14 +8,14 @@ const notificationSchema = new mongoose.Schema(
     type: {
       type: String,
       enum: [
-        'complaint', 'feedback', 'academic_review', 'system', 'escalation', 'resolution',
+        'complaint', 'feedback', 'system', 'escalation', 'resolution',
         'complaint_created', 'complaint_assigned', 'complaint_escalated', 'complaint_resolved',
-        'complaint_updated', 'academic_review_updated'
+        'complaint_updated'
       ],
       default: 'system',
     },
     entityId: { type: mongoose.Schema.Types.ObjectId }, // complaint / feedback / review ID
-    entityType: { type: String, enum: ['Complaint', 'Feedback', 'AcademicReview', null] },
+    entityType: { type: String, enum: ['Complaint', 'Feedback', null] },
     link: { type: String }, // frontend route
     isRead: { type: Boolean, default: false, index: true },
     readAt: { type: Date },

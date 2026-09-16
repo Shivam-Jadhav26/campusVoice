@@ -1,8 +1,8 @@
-const ROLES = ['student', 'teacher', 'tg', 'class_incharge', 'hod', 'admin'];
+const ROLES = ['student', 'tg', 'class_incharge', 'hod', 'admin'];
 
-const ESCALATION_CHAIN = ['Teacher', 'TG', 'Class Incharge', 'HOD'];
+const ESCALATION_CHAIN = ['TG', 'Class Incharge', 'HOD'];
 
-const ESCALATION_ROLES = ['teacher', 'tg', 'class_incharge', 'hod'];
+const ESCALATION_ROLES = ['tg', 'class_incharge', 'hod'];
 
 const COMPLAINT_CATEGORIES = [
   'Academic', 'Infrastructure', 'Laboratory', 'Hostel', 
@@ -17,7 +17,6 @@ const COMPLAINT_STATUSES = [
 const COMPLAINT_PRIORITIES = ['Low', 'Medium', 'High', 'Critical'];
 
 const DEFAULT_ESCALATION_HOURS = { 
-  teacher: 24, 
   tg: 24, 
   class_incharge: 24, 
   hod: 24 

@@ -242,21 +242,6 @@ export default function StudentDashboard() {
           <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
         </Link>
 
-        <Link
-          to="/student/academic-review"
-          className="group p-5 rounded-2xl bg-white border border-slate-200/90 hover:border-indigo-400 hover:shadow-md transition-all flex items-center justify-between"
-        >
-          <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <BookOpen className="w-5 h-5 stroke-[2.5]" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Academic Re-evaluation</h4>
-              <p className="text-xs text-slate-500">Mid-term, End-term paper review</p>
-            </div>
-          </div>
-          <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
-        </Link>
 
         <Link
           to="/student/feedback"
@@ -398,7 +383,7 @@ export default function StudentDashboard() {
           <div className="mt-4 p-3.5 rounded-xl bg-indigo-50/60 border border-indigo-100 flex items-start gap-2.5 text-xs text-indigo-900">
             <AlertCircle className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
             <p>
-              Complaints unresolved within 24 hours are automatically escalated to your Teacher Guardian & HOD.
+              Complaints unresolved within 24 hours are automatically escalated to your Tutor Guardian & HOD.
             </p>
           </div>
         </div>

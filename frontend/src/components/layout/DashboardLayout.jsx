@@ -14,7 +14,7 @@ const getPageTitle = (pathname) => {
     'complaints': 'Complaints',
     'submit': 'Submit Complaint',
     'feedback': 'Feedback',
-    'academic-review': 'Academic Review',
+
     'users': 'User Management',
     'departments': 'Departments',
     'analytics': 'Analytics',

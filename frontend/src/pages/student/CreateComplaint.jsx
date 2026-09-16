@@ -289,10 +289,9 @@ export default function CreateComplaint() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Escalation Level</label>
                 <select {...register('escalationLevel')} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
-                  <option value="0">Level 0: Teacher</option>
-                  <option value="1">Level 1: Tutor Guardian (TG)</option>
-                  <option value="2">Level 2: Class Incharge</option>
-                  <option value="3">Level 3: Head of Department (HOD)</option>
+                  <option value="0">Level 0: Tutor Guardian (TG)</option>
+                  <option value="1">Level 1: Class Incharge</option>
+                  <option value="2">Level 2: Head of Department (HOD)</option>
                 </select>
                 <p className="text-xs text-gray-500 mt-1">Select the starting level for this complaint.</p>
               </div>

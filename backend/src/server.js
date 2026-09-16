@@ -16,7 +16,6 @@ const userRoutes = require('./routes/userRoutes');
 const complaintRoutes = require('./routes/complaintRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
 const feedbackRequestRoutes = require('./routes/feedbackRequestRoutes');
-const academicReviewRoutes = require('./routes/academicReviewRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
@@ -55,7 +54,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/feedback-requests', feedbackRequestRoutes);
-app.use('/api/academic-reviews', academicReviewRoutes);
+
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/analytics', analyticsRoutes);

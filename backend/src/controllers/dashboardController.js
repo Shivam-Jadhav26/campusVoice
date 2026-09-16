@@ -143,7 +143,7 @@ exports.getAdminDashboard = async (req, res, next) => {
     const Department = require('../models/Department');
 
     const totalStudents = await User.countDocuments({ role: 'student' });
-    const totalFaculty = await User.countDocuments({ role: { $in: ['teacher', 'tg', 'class_incharge', 'hod'] } });
+    const totalFaculty = await User.countDocuments({ role: { $in: ['tg', 'class_incharge', 'hod'] } });
     const totalUsers = totalStudents + totalFaculty;
     const totalComplaints = await Complaint.countDocuments();
 

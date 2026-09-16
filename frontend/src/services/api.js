@@ -84,13 +84,7 @@ export const feedbackAPI = {
   getAnalytics: (params) => api.get('/feedback/analytics', { params }),
 };
 
-export const academicReviewAPI = {
-  create: (data) => api.post('/academic-reviews', data),
-  getAll: (params) => api.get('/academic-reviews', { params }),
-  getById: (id) => api.get(`/academic-reviews/${id}`),
-  submitFacultyDecision: (id, data) => api.post(`/academic-reviews/${id}/faculty-decision`, data),
-  submitHODDecision: (id, data) => api.post(`/academic-reviews/${id}/hod-decision`, data),
-};
+
 
 export const notificationAPI = {
   getAll: (params) => api.get('/notifications', { params }),

@@ -26,7 +26,7 @@ export default function ProfilePage() {
     phone: user?.phone || '+91 98201 10002',
     class: user?.class || 'SE-A',
     rollNumber: user?.rollNumber || 'CE2024001',
-    dob: user?.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
+
     currentYear: user?.currentYear || '2nd Year',
     batch: user?.batch || '2023-2027',
     teacherGuardian: user?.teacherGuardian || '',
@@ -161,60 +161,67 @@ export default function ProfilePage() {
                       className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm" 
                     />
                   </div>
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Class / Section</label>
-                    <input 
-                      type="text" 
-                      disabled={!isEditing} 
-                      value={formData.class} 
-                      onChange={e => setFormData({...formData, class: e.target.value})} 
-                      className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Roll Number</label>
-                    <input 
-                      type="text" 
-                      disabled={!isEditing} 
-                      value={formData.rollNumber} 
-                      onChange={e => setFormData({...formData, rollNumber: e.target.value})} 
-                      className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Date of Birth</label>
-                    <input 
-                      type="date" 
-                      disabled={!isEditing} 
-                      value={formData.dob} 
-                      onChange={e => setFormData({...formData, dob: e.target.value})} 
-                      className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm [color-scheme:light]" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Current Year</label>
-                    <input 
-                      type="text" 
-                      disabled={!isEditing} 
-                      value={formData.currentYear} 
-                      onChange={e => setFormData({...formData, currentYear: e.target.value})} 
-                      className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Batch</label>
-                    <input 
-                      type="text" 
-                      disabled={!isEditing} 
-                      value={formData.batch} 
-                      onChange={e => setFormData({...formData, batch: e.target.value})} 
-                      className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm" 
-                    />
-                  </div>
                   {user?.role === 'student' && (
                     <>
                       <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Teacher Guardian</label>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Class / Section</label>
+                        <input 
+                          type="text" 
+                          disabled={!isEditing} 
+                          value={formData.class} 
+                          onChange={e => setFormData({...formData, class: e.target.value})} 
+                          className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm" 
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Roll Number</label>
+                        <input 
+                          type="text" 
+                          disabled={!isEditing} 
+                          value={formData.rollNumber} 
+                          onChange={e => setFormData({...formData, rollNumber: e.target.value})} 
+                          className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm" 
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Current Year</label>
+                        <input 
+                          type="text" 
+                          disabled={!isEditing} 
+                          value={formData.currentYear} 
+                          onChange={e => setFormData({...formData, currentYear: e.target.value})} 
+                          className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm" 
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Batch</label>
+                        <input 
+                          type="text" 
+                          disabled={!isEditing} 
+                          value={formData.batch} 
+                          onChange={e => setFormData({...formData, batch: e.target.value})} 
+                          className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 text-sm" 
+                        />
+                      </div>
+                    </>
+                  )}
+                  
+                  {user?.role !== 'student' && (
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Department</label>
+                      <input 
+                        type="text" 
+                        disabled={true} 
+                        value={user?.departmentName || 'Computer Engineering'} 
+                        className="w-full px-3.5 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 bg-slate-50 text-slate-500 text-sm" 
+                      />
+                    </div>
+                  )}
+                  {user?.role === 'student' && (
+                    <>
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Tutor Guardian</label>
                         <select
                           disabled={!isEditing}
                           value={formData.teacherGuardian}

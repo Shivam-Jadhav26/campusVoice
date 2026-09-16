@@ -6,7 +6,7 @@ const systemSettingsSchema = new mongoose.Schema(
     isSingleton: { type: Boolean, default: true, unique: true },
     
     // Escalation Timers (Hours)
-    escalationTeacher: { type: Number, default: 24 },
+
     escalationTG: { type: Number, default: 48 },
     escalationClassIncharge: { type: Number, default: 72 },
     escalationHOD: { type: Number, default: 120 },

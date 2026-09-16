@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 
 const STATUSES = ['Pending', 'In Progress', 'Resolved', 'Rejected', 'Escalated', 'Reopened', 'Closed'];
 const CATEGORIES = ['Academic', 'Infrastructure', 'Laboratory', 'Hostel', 'Library', 'Mess', 'Faculty', 'Transport', 'IT', 'Other'];
-const ESCALATION_LABELS = ['L0 · Teacher', 'L1 · TG', 'L2 · Class Incharge', 'L3 · HOD'];
+const ESCALATION_LABELS = ['L0 · TG', 'L1 · Class Incharge', 'L2 · HOD'];
 const TERMINAL_STATUSES = ['Resolved', 'Rejected', 'Closed'];
 const PAGE_SIZE = 15;
 

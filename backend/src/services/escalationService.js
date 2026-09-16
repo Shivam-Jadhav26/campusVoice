@@ -48,8 +48,8 @@ const getEscalationHoursForLevel = (level, escalationConfig = {}) => {
 const escalateComplaint = async (complaint) => {
   const currentLevel = complaint.escalationLevel || 0;
   
-  if (currentLevel >= 3) {
-    complaint.escalationLevel = 3;
+  if (currentLevel >= 2) {
+    complaint.escalationLevel = 2;
     await complaint.save();
     return complaint;
   }

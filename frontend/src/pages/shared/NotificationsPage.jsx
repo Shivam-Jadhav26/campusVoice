@@ -50,7 +50,6 @@ export default function NotificationsPage() {
     if (activeFilter === 'all') return true;
     if (activeFilter === 'unread') return !n.isRead;
     if (activeFilter === 'complaint') return ['complaint', 'resolution', 'escalation'].includes(n.type);
-    if (activeFilter === 'academic') return n.type === 'academic_review';
     return true;
   });
 
@@ -61,8 +60,7 @@ export default function NotificationsPage() {
         return <Check className="w-5 h-5 text-emerald-600" />;
       case 'escalation':
         return <AlertTriangle className="w-5 h-5 text-rose-600" />;
-      case 'academic_review':
-        return <FileText className="w-5 h-5 text-purple-600" />;
+
       case 'feedback':
         return <MessageSquare className="w-5 h-5 text-blue-600" />;
       default:
@@ -77,8 +75,7 @@ export default function NotificationsPage() {
         return 'bg-emerald-50 border-emerald-200';
       case 'escalation':
         return 'bg-rose-50 border-rose-200';
-      case 'academic_review':
-        return 'bg-purple-50 border-purple-200';
+
       case 'feedback':
         return 'bg-blue-50 border-blue-200';
       default:
@@ -97,7 +94,7 @@ export default function NotificationsPage() {
               <Bell className="w-6 h-6 text-indigo-600" />
               Notifications
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5">Real-time status updates, SLA breaches, and academic review decisions</p>
+            <p className="text-sm text-slate-500 mt-0.5">Real-time status updates and SLA breaches</p>
           </div>
           
           <button 
@@ -115,7 +112,7 @@ export default function NotificationsPage() {
             { id: 'all', label: 'All Updates' },
             { id: 'unread', label: 'Unread' },
             { id: 'complaint', label: 'Complaints' },
-            { id: 'academic', label: 'Academic Reviews' }
+
           ].map(f => (
             <button
               key={f.id}

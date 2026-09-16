@@ -13,14 +13,13 @@ import StudentDashboard from './pages/student/StudentDashboard';
 import StudentComplaints from './pages/student/StudentComplaints';
 import CreateComplaint from './pages/student/CreateComplaint';
 import ComplaintDetail from './pages/student/ComplaintDetail';
-import AcademicReview from './pages/student/AcademicReview';
+
 
 // Teacher
 import AssignedFeedback from './pages/student/AssignedFeedback';
 import AssignFeedback from './pages/teacher/AssignFeedback';
 import FacultyFeedbackResults from './pages/teacher/FacultyFeedbackResults';
-import TeacherDashboard from './pages/teacher/TeacherDashboard';
-import TeacherComplaints from './pages/teacher/TeacherComplaints';
+
 
 // TG
 import TGDashboard from './pages/tg/TGDashboard';
@@ -76,7 +75,7 @@ const RoleBasedRedirect = () => {
 
   switch (user?.role) {
     case 'student': return <Navigate to="/student/dashboard" replace />;
-    case 'teacher': return <Navigate to="/teacher/dashboard" replace />;
+
     case 'tg': return <Navigate to="/tg/dashboard" replace />;
     case 'class_incharge': return <Navigate to="/class-incharge/dashboard" replace />;
     case 'hod': return <Navigate to="/hod/dashboard" replace />;
@@ -111,19 +110,13 @@ const App = () => {
             <Route path="/student/complaints/new" element={<ProtectedRoute allowedRoles={['student']}><CreateComplaint /></ProtectedRoute>} />
             <Route path="/student/complaints/:id" element={<ProtectedRoute allowedRoles={['student']}><ComplaintDetail /></ProtectedRoute>} />
             <Route path="/student/assigned-feedback" element={<ProtectedRoute allowedRoles={['student']}><AssignedFeedback /></ProtectedRoute>} />
-            <Route path="/student/academic-review" element={<ProtectedRoute allowedRoles={['student']}><AcademicReview /></ProtectedRoute>} />
+
             <Route path="/student/notifications" element={<ProtectedRoute allowedRoles={['student']}><NotificationsPage /></ProtectedRoute>} />
             <Route path="/student/profile" element={<ProtectedRoute allowedRoles={['student']}><ProfilePage /></ProtectedRoute>} />
 
-            {/* Teacher Routes */}
-            <Route path="/teacher/dashboard" element={<ProtectedRoute allowedRoles={['teacher']}><TeacherDashboard /></ProtectedRoute>} />
-            <Route path="/teacher/assign-feedback" element={<ProtectedRoute allowedRoles={['teacher', 'tg', 'class_incharge', 'hod', 'admin']}><AssignFeedback /></ProtectedRoute>} />
-            <Route path="/teacher/feedback-results" element={<ProtectedRoute allowedRoles={['teacher', 'tg', 'class_incharge', 'hod', 'admin']}><FacultyFeedbackResults /></ProtectedRoute>} />
-            <Route path="/teacher/complaints" element={<ProtectedRoute allowedRoles={['teacher']}><TeacherComplaints /></ProtectedRoute>} />
-            <Route path="/teacher/complaints/:id" element={<ProtectedRoute allowedRoles={['teacher', 'tg', 'class_incharge', 'hod', 'admin']}><ComplaintDetail /></ProtectedRoute>} />
-            <Route path="/teacher/notifications" element={<ProtectedRoute allowedRoles={['teacher']}><NotificationsPage /></ProtectedRoute>} />
-            <Route path="/teacher/profile" element={<ProtectedRoute allowedRoles={['teacher']}><ProfilePage /></ProtectedRoute>} />
-
+            {/* Feedback Routes for all staff */}
+            <Route path="/faculty/assign-feedback" element={<ProtectedRoute allowedRoles={['tg', 'class_incharge', 'hod', 'admin']}><AssignFeedback /></ProtectedRoute>} />
+            <Route path="/faculty/feedback-results" element={<ProtectedRoute allowedRoles={['tg', 'class_incharge', 'hod', 'admin']}><FacultyFeedbackResults /></ProtectedRoute>} />
             {/* TG Routes */}
             <Route path="/tg/dashboard" element={<ProtectedRoute allowedRoles={['tg']}><TGDashboard /></ProtectedRoute>} />
             <Route path="/tg/complaints" element={<ProtectedRoute allowedRoles={['tg']}><TGComplaints /></ProtectedRoute>} />

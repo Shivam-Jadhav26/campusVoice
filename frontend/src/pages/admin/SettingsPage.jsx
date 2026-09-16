@@ -6,7 +6,7 @@ import { settingsAPI } from '../../services/api';
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState({
-    escalationTeacher: 24,
+
     escalationTG: 48,
     escalationClassIncharge: 72,
     escalationHOD: 120,
@@ -78,15 +78,7 @@ export default function SettingsPage() {
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">Escalation Timers (Hours)</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Teacher to TG</label>
-              <input 
-                type="number" 
-                value={settings.escalationTeacher} 
-                onChange={e => handleChange('escalationTeacher', parseInt(e.target.value) || 0)} 
-                className="w-full border rounded-lg p-2 focus:ring-indigo-500" 
-              />
-            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">TG to Class Incharge</label>
               <input 

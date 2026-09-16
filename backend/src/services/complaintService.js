@@ -13,13 +13,12 @@ const assignInitialHandler = async (complaint, department, escalationLevel = 0) 
   }
 
   const roleMap = {
-    0: 'teacher',
-    1: 'tg',
-    2: 'class_incharge',
-    3: 'hod'
+    0: 'tg',
+    1: 'class_incharge',
+    2: 'hod'
   };
 
-  let targetRole = roleMap[escalationLevel] || 'teacher';
+  let targetRole = roleMap[escalationLevel] || 'tg';
   let handler = null;
   
   const student = await User.findById(complaint.studentId);
@@ -41,7 +40,7 @@ const assignInitialHandler = async (complaint, department, escalationLevel = 0) 
     handler = await User.findOne({ role: targetRole });
   }
   
-  if (!handler && targetRole !== 'teacher') handler = await User.findOne({ role: 'teacher' });
+  if (!handler && targetRole !== 'tg') handler = await User.findOne({ role: 'tg' });
   if (!handler) handler = await User.findOne({ role: 'hod' });
   if (!handler) handler = await User.findOne({ role: 'admin' });
 

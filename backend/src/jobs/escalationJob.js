@@ -10,7 +10,7 @@ const startEscalationJob = () => {
       const overdueComplaints = await Complaint.find({
         status: { $nin: ['Resolved', 'Rejected', 'Closed'] },
         deadline: { $lt: now },
-        escalationLevel: { $lt: 4 }
+        escalationLevel: { $lt: 2 }
       });
 
       let escalatedCount = 0;

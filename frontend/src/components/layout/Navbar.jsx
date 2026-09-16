@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Menu, Search, Bell, Settings, LogOut, User } from 'lucide-react';
+import { Menu, Bell, Settings, LogOut, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { formatRole, getInitials } from '../../utils/helpers';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { notificationAPI } from '../../services/api';
 const Navbar = ({ onMenuClick, title }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -13,13 +13,35 @@ const Navbar = ({ onMenuClick, title }) => {
   const profileMenuRef = useRef(null);
   const notifMenuRef = useRef(null);
 
-  // Mock notifications for UI purposes
-  const mockNotifications = [
-    { id: 1, text: 'New complaint assigned to you', time: '5m ago', read: false },
-    { id: 2, text: 'Complaint #1234 has been resolved', time: '1h ago', read: false },
-    { id: 3, text: 'Reminder: Update status for #5678', time: '3h ago', read: true },
-  ];
-  const unreadCount = mockNotifications.filter(n => !n.read).length;
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchNotifications = async () => {
+    try {
+      const res = await notificationAPI.getAll({ limit: 5 });
+      setNotifications(res.data.data?.notifications || res.data.data || []);
+      
+      const countRes = await notificationAPI.getUnreadCount();
+      setUnreadCount(countRes.data.data?.count ?? 0);
+    } catch (err) {
+      console.error('Failed to fetch notifications', err);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+    }
+  }, [user]);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await notificationAPI.markAllAsRead();
+      fetchNotifications();
+    } catch (err) {
+      console.error('Failed to mark all as read', err);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -53,18 +75,7 @@ const Navbar = ({ onMenuClick, title }) => {
         </h1>
       </div>
 
-      <div className="flex-1 max-w-lg hidden md:block px-4">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
-          </div>
-          <input
-            type="text"
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-            placeholder="Search complaints, users..."
-          />
-        </div>
-      </div>
+
 
       <div className="flex items-center gap-4 flex-1 justify-end">
         {/* Notifications */}
@@ -83,15 +94,21 @@ const Navbar = ({ onMenuClick, title }) => {
             <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 focus:outline-none">
               <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
                 <span className="text-sm font-semibold text-gray-700">Notifications</span>
-                <button className="text-xs text-primary-600 hover:text-primary-800 font-medium">
+                <button 
+                  onClick={handleMarkAllRead}
+                  className="text-xs text-primary-600 hover:text-primary-800 font-medium"
+                >
                   Mark all read
                 </button>
               </div>
               <div className="max-h-64 overflow-y-auto">
-                {mockNotifications.map(notif => (
-                  <div key={notif.id} className={`px-4 py-3 hover:bg-gray-50 border-b border-gray-50 ${!notif.read ? 'bg-blue-50/50' : ''}`}>
-                    <p className="text-sm text-gray-800">{notif.text}</p>
-                    <p className="text-xs text-gray-500 mt-1">{notif.time}</p>
+                {notifications.length === 0 ? (
+                  <div className="px-4 py-4 text-center text-sm text-gray-500">No notifications</div>
+                ) : notifications.map(notif => (
+                  <div key={notif._id} className={`px-4 py-3 hover:bg-gray-50 border-b border-gray-50 ${!notif.isRead ? 'bg-blue-50/50' : ''}`}>
+                    <p className="text-sm font-medium text-gray-800">{notif.title}</p>
+                    <p className="text-sm text-gray-600 line-clamp-2 mt-0.5">{notif.message}</p>
+                    <p className="text-xs text-gray-500 mt-1">{new Date(notif.createdAt).toLocaleString()}</p>
                   </div>
                 ))}
               </div>

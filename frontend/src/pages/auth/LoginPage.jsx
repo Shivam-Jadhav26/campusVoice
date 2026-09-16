@@ -49,9 +49,7 @@ export default function LoginPage() {
         case 'student':
           navigate('/student/dashboard');
           break;
-        case 'teacher':
-          navigate('/teacher/dashboard');
-          break;
+
         case 'tg':
           navigate('/tg/dashboard');
           break;
@@ -73,109 +71,28 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50 font-sans selection:bg-indigo-500 selection:text-white">
-      {/* LEFT COLUMN: HERO & VALUE PROPOSITION */}
-      <div className="relative lg:w-7/12 flex flex-col justify-between p-8 sm:p-12 lg:p-16 overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-slate-50 border-b lg:border-b-0 lg:border-r border-indigo-100">
+    <div 
+      className="min-h-screen flex items-center justify-center bg-cover bg-center font-sans p-4 sm:p-8 relative selection:bg-indigo-500 selection:text-white"
+      style={{ backgroundImage: "url('/bg-building-new.jpg')" }}
+    >
+      <div className="absolute inset-0 bg-white/30"></div>
+      
+      <div className="relative z-10 w-full max-w-md bg-white/95 border border-slate-200 p-8 rounded-2xl shadow-2xl backdrop-blur-md">
         
-        {/* Background glow effects */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-1/2 -right-32 w-96 h-96 bg-violet-600/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-sky-600/15 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Top bar: Brand */}
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-sky-400 flex items-center justify-center shadow-lg shadow-indigo-500/25 border border-white/20">
-              <Shield className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-black tracking-tight text-slate-900">Campus Voice</span>
-                <span className="px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200">
-                  v2.0 PRO
-                </span>
-              </div>
-              <p className="text-xs text-indigo-600/80 font-medium">Next-Gen College Grievance & Academic Redressal Engine</p>
-            </div>
-          </div>
-
-          {/* Headline */}
-          <div className="mt-8 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-medium backdrop-blur-md mb-6 shadow-sm">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Smart AI Categorization & Automated SLA Escalation</span>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.15]">
-              Every Student Voice Heard.{' '}
-              <span className="bg-gradient-to-r from-indigo-600 via-indigo-500 to-indigo-800 bg-clip-text text-transparent">
-                Every Issue Resolved.
-              </span>
-            </h1>
-
-            <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
-              A transparent, hierarchical platform connecting students directly with Teachers, Guardians, and HODs with automated SLA tracking.
-            </p>
-          </div>
-        </div>
-
-
-      </div>
-
-      {/* RIGHT COLUMN: LOGIN FORM & 1-CLICK DEMO LOGIN */}
-      <div className="relative lg:w-5/12 flex items-center justify-center p-6 sm:p-10 lg:p-12 bg-white backdrop-blur-2xl border-l border-slate-200 shadow-xl">
-        
-        <div className="w-full max-w-md space-y-6">
+        <div className="w-full space-y-6">
 
           {/* Form Header */}
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+          <div className="text-center">
+            <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/20 overflow-hidden">
+              <img src="/logo.png" alt="Campus Voice Logo" className="w-10 h-10 object-contain" />
+            </div>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Campus Voice</h1>
+            <p className="text-sm text-slate-500 mt-2">
               Sign In to Portal
-            </h2>
-            <p className="text-sm text-slate-500 mt-1">
-              Select your role tab below or enter your institutional credentials.
             </p>
           </div>
 
-          {/* Role Tab Selector */}
-          <div className="flex p-1 rounded-xl bg-slate-100/80 border border-slate-200 shadow-inner">
-            <button
-              type="button"
-              onClick={() => setActiveTab('student')}
-              className={`flex-1 py-2 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-                activeTab === 'student'
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'text-slate-500 hover:text-slate-900 hover:bg-white'
-              }`}
-            >
-              <GraduationCap className="w-4 h-4" />
-              Student
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('faculty')}
-              className={`flex-1 py-2 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-                activeTab === 'faculty'
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'text-slate-500 hover:text-slate-900 hover:bg-white'
-              }`}
-            >
-              <Briefcase className="w-4 h-4" />
-              Faculty / Staff
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('admin')}
-              className={`flex-1 py-2 text-xs sm:text-sm font-semibold rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-                activeTab === 'admin'
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'text-slate-500 hover:text-slate-900 hover:bg-white'
-              }`}
-            >
-              <Shield className="w-4 h-4" />
-              Admin
-            </button>
-          </div>
+
 
           {/* Login Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

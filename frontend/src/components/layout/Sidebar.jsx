@@ -41,31 +41,24 @@ const Sidebar = ({ isOpen, onClose }) => {
           { label: 'My Complaints', path: '/student/complaints', icon: FileText },
           { label: 'Submit Complaint', path: '/student/complaints/create', icon: PlusCircle },
           { label: 'Assigned Feedback', path: '/student/assigned-feedback', icon: FileText },
-          { label: 'Academic Review', path: '/student/academic-review', icon: BookOpen },
+
           ...common
         ];
-      case 'teacher':
-        return [
-          { label: 'Dashboard', path: '/teacher/dashboard', icon: LayoutDashboard },
-          { label: 'Assigned Complaints', path: '/teacher/complaints', icon: FileText },
-          { label: 'Assign Feedback', path: '/teacher/assign-feedback', icon: FileText },
-          { label: 'Feedback Results', path: '/teacher/feedback-results', icon: BookOpen },
-          ...common
-        ];
+
       case 'tg':
         return [
           { label: 'Dashboard', path: '/tg/dashboard', icon: LayoutDashboard },
           { label: 'Complaints', path: '/tg/complaints', icon: FileText },
-          { label: 'Assign Feedback', path: '/teacher/assign-feedback', icon: FileText },
-          { label: 'Feedback Results', path: '/teacher/feedback-results', icon: BookOpen },
+          { label: 'Assign Feedback', path: '/faculty/assign-feedback', icon: FileText },
+          { label: 'Feedback Results', path: '/faculty/feedback-results', icon: BookOpen },
           ...common
         ];
       case 'class_incharge':
         return [
           { label: 'Dashboard', path: '/class-incharge/dashboard', icon: LayoutDashboard },
           { label: 'Complaints', path: '/class-incharge/complaints', icon: FileText },
-          { label: 'Assign Feedback', path: '/teacher/assign-feedback', icon: FileText },
-          { label: 'Feedback Results', path: '/teacher/feedback-results', icon: BookOpen },
+          { label: 'Assign Feedback', path: '/faculty/assign-feedback', icon: FileText },
+          { label: 'Feedback Results', path: '/faculty/feedback-results', icon: BookOpen },
           ...common
         ];
       case 'hod':
@@ -73,8 +66,8 @@ const Sidebar = ({ isOpen, onClose }) => {
           { label: 'Dashboard', path: '/hod/dashboard', icon: LayoutDashboard },
           { label: 'Complaints', path: '/hod/complaints', icon: FileText },
           { label: 'Analytics', path: '/hod/analytics', icon: BarChart3 },
-          { label: 'Assign Feedback', path: '/teacher/assign-feedback', icon: FileText },
-          { label: 'Feedback Results', path: '/teacher/feedback-results', icon: BookOpen },
+          { label: 'Assign Feedback', path: '/faculty/assign-feedback', icon: FileText },
+          { label: 'Feedback Results', path: '/faculty/feedback-results', icon: BookOpen },
           ...common
         ];
       case 'admin':
@@ -119,7 +112,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         {/* Header/Logo */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200 shrink-0">
           <div className="flex items-center gap-2 text-primary-600">
-            <Shield className="w-8 h-8" />
+            <img src="/logo.png" alt="Campus Voice Logo" className="w-8 h-8 object-contain" />
             <span className="text-xl font-bold tracking-tight">Campus Voice</span>
           </div>
           <button 
